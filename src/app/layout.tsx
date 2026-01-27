@@ -17,6 +17,9 @@ import { WhatsAppButton } from "@/components/whatsapp-button";
 export const metadata: Metadata = {
   title: "Sigortacınız.com | Hızlı ve Güvenilir Sigorta Çözümleri",
   description: "Aracınız, sağlığınız ve eviniz için en uygun sigorta tekliflerini saniyeler içinde alın.",
+  icons: {
+    icon: "/logo.jpg",
+  },
 };
 
 export default function RootLayout({
