@@ -5,11 +5,15 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Heart, ArrowLeft, Send } from "lucide-react"
 import Link from "next/link"
+import { useState, useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
+
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { createClient } from "@/lib/supabase/client"
 
 const formSchema = z.object({
     tcNumber: z.string().length(11, "TC Kimlik Numarası 11 haneli olmalıdır."),
@@ -25,6 +29,16 @@ type FormValues = z.infer<typeof formSchema>
 export default function HealthInsurancePage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
+    const [user, setUser] = useState<any>(null)
+    const supabase = createClient()
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser()
+            setUser(user)
+        }
+        checkUser()
+    }, [])
 
     const {
         register,
@@ -74,7 +88,9 @@ export default function HealthInsurancePage() {
                     Sağlık sigortası talebiniz bize ulaştı. En kısa sürede sizinle iletişime geçeceğiz.
                 </p>
                 <Button asChild>
-                    <Link href="/">Ana Sayfaya Dön</Link>
+                    <Link href={user ? "/panel" : "/"}>
+                        {user ? "Panele Dön" : "Ana Sayfaya Dön"}
+                    </Link>
                 </Button>
             </div>
         )

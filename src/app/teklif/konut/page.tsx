@@ -6,10 +6,14 @@ import { z } from "zod"
 import { Home, ArrowLeft, Send } from "lucide-react"
 import Link from "next/link"
 
+import { useState, useEffect } from "react"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { createClient } from "@/lib/supabase/client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
 
 const formSchema = z.object({
     productType: z.enum(["dask", "konut", "ikisi"]),
@@ -28,6 +32,16 @@ type FormValues = z.infer<typeof formSchema>
 export default function HomeInsurancePage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
+    const [user, setUser] = useState<any>(null)
+    const supabase = createClient()
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser()
+            setUser(user)
+        }
+        checkUser()
+    }, [])
 
     const {
         register,
@@ -85,7 +99,9 @@ export default function HomeInsurancePage() {
                     Konut/DASK sigortası talebiniz bize ulaştı. En kısa sürede sizinle iletişime geçeceğiz.
                 </p>
                 <Button asChild>
-                    <Link href="/">Ana Sayfaya Dön</Link>
+                    <Link href={user ? "/panel" : "/"}>
+                        {user ? "Panele Dön" : "Ana Sayfaya Dön"}
+                    </Link>
                 </Button>
             </div>
         )

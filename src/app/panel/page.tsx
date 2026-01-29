@@ -143,7 +143,7 @@ export default function DashboardPage() {
                                                     </td>
                                                     <td className="p-4 py-3">
                                                         <span className={`px-2 py-1 rounded-full text-[10px] font-extrabold uppercase ${lead.status === 'Satışa Döndü' ? 'bg-green-100 text-green-700' :
-                                                                lead.status === 'İptal' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+                                                            lead.status === 'İptal' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
                                                             }`}>
                                                             {lead.status}
                                                         </span>
@@ -172,12 +172,20 @@ export default function DashboardPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-1">
+                                <p className="text-xs font-bold uppercase text-slate-400">İsim Soyisim</p>
+                                <p className="font-semibold">{profile.full_name || 'Girilmedi'}</p>
+                            </div>
+                            <div className="space-y-1">
                                 <p className="text-xs font-bold uppercase text-slate-400">E-Posta</p>
                                 <p className="font-semibold">{profile.email}</p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-xs font-bold uppercase text-slate-400">IBAN</p>
                                 <p className="font-semibold">{profile.iban || 'Henüz eklenmemiş'}</p>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-xs font-bold uppercase text-slate-400">Referans Kodunuz</p>
+                                <p className="font-bold text-primary">{profile.affiliate_id}</p>
                             </div>
                             <Button variant="secondary" className="w-full font-bold">Profilini Düzenle</Button>
                         </CardContent>
