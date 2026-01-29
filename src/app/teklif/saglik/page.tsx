@@ -59,10 +59,10 @@ export default function HealthInsurancePage() {
             const formattedDate = data.birthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
 
             const message = `Merhaba, Sağlık Sigortası teklifi almak istiyorum:\n\n` +
-                `🆔 TC: ${data.tcNumber}\n` +
-                `📅 Doğum Tarihi: ${formattedDate}\n` +
-                `👤 Cinsiyet: ${data.gender}\n` +
-                `📞 Telefon: ${data.phoneNumber}`;
+                `TC: ${data.tcNumber}\n` +
+                `Doğum Tarihi: ${formattedDate}\n` +
+                `Cinsiyet: ${data.gender}\n` +
+                `Telefon: ${data.phoneNumber}`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;

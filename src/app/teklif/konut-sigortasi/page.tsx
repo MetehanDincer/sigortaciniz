@@ -63,13 +63,13 @@ export default function KonutSigortasiPage() {
             const formattedDate = data.ownerBirthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
 
             const message = `Merhaba, Konut Sigortası teklifi almak istiyorum:\n\n` +
-                `🆔 TC: ${data.ownerTc}\n` +
-                `📅 Doğum Tarihi: ${formattedDate}\n` +
-                `📞 Telefon: ${data.phoneNumber}\n` +
-                `🏠 Adres: ${data.address}\n` +
-                `📏 Alan: ${data.squareMeters} m2\n` +
-                `🏢 Kat: ${data.floorLevel}/${data.totalFloors}\n` +
-                `🏗️ İnşa Yılı: ${data.buildYear}`;
+                `TC: ${data.ownerTc}\n` +
+                `Doğum Tarihi: ${formattedDate}\n` +
+                `Telefon: ${data.phoneNumber}\n` +
+                `Adres: ${data.address}\n` +
+                `Alan: ${data.squareMeters} m2\n` +
+                `Kat: ${data.floorLevel}/${data.totalFloors}\n` +
+                `İnşa Yılı: ${data.buildYear}`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;

@@ -70,11 +70,11 @@ export default function KaskoSigortasiPage() {
 
             // 3. Redirect to WhatsApp
             const message = `Merhaba, Kasko Sigortası teklifi almak istiyorum:\n\n` +
-                `🆔 TC: ${data.tcNumber}\n` +
-                `📅 Doğum Tarihi: ${formattedDate}\n` +
-                `🚗 Plaka: ${data.plateNumber}\n` +
-                `📄 Ruhsat Seri: ${data.licenseSerial}\n` +
-                `📞 Telefon: ${data.phoneNumber}`;
+                `TC Kimlik: ${data.tcNumber}\n` +
+                `Doğum Tarihi: ${formattedDate}\n` +
+                `Plaka: ${data.plateNumber}\n` +
+                `Ruhsat Seri: ${data.licenseSerial}\n` +
+                `Telefon: ${data.phoneNumber}`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;

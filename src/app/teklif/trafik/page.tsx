@@ -64,11 +64,11 @@ export default function TrafikSigortasiPage() {
 
             // 3. Redirect to WhatsApp
             const message = `Merhaba, Trafik Sigortası teklifi almak istiyorum:\n\n` +
-                `🚗 Plaka: ${data.plateNumber}\n` +
-                `🆔 TC/VKN: ${data.tcNumber}\n` +
-                `📅 Doğum Tarihi: ${formattedDate}\n` +
-                `📄 Ruhsat Seri: ${data.licenseSerial}\n` +
-                `📞 Telefon: ${data.phoneNumber}`;
+                `Plaka: ${data.plateNumber}\n` +
+                `TC/VKN: ${data.tcNumber}\n` +
+                `Doğum Tarihi: ${formattedDate}\n` +
+                `Ruhsat Seri: ${data.licenseSerial}\n` +
+                `Telefon: ${data.phoneNumber}`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;

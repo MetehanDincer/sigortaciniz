@@ -71,12 +71,13 @@ export default function VehicleInsurancePage() {
             const formattedDate = data.birthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
 
             // 3. Redirect to WhatsApp
-            const message = `Merhaba, Araç Sigortası teklifi almak istiyorum:\n\n` +
-                `🆔 TC: ${data.tcNumber}\n` +
-                `📅 Doğum Tarihi: ${formattedDate}\n` +
-                `🚗 Plaka: ${data.plateNumber}\n` +
-                `📄 Ruhsat Seri: ${data.licenseSerial}\n` +
-                `📞 Telefon: ${data.phoneNumber}`;
+            const message = `Merhaba, ${data.productType === "trafik" ? "Trafik" : data.productType === "kasko" ? "Kasko" : "Trafik ve Kasko"} teklifi almak istiyorum:\n\n` +
+                `Sigorta Türü: ${data.productType === "trafik" ? "Trafik Sigortası" : data.productType === "kasko" ? "Kasko" : "Trafik ve Kasko"}\n` +
+                `TC Kimlik: ${data.tcNumber}\n` +
+                `Doğum Tarihi: ${formattedDate}\n` +
+                `Plaka: ${data.plateNumber}\n` +
+                `Ruhsat Seri: ${data.licenseSerial}\n` +
+                `Telefon: ${data.phoneNumber}`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;
