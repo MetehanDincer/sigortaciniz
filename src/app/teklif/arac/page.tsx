@@ -191,7 +191,6 @@ export default function VehicleInsurancePage() {
                             <Input
                                 id="plateNumber"
                                 placeholder="34 ABC 123"
-                                className="uppercase"
                                 {...register("plateNumber")}
                             />
                             {errors.plateNumber && (
@@ -207,7 +206,6 @@ export default function VehicleInsurancePage() {
                                 id="licenseSerial"
                                 placeholder="Örn: AB123456"
                                 maxLength={8}
-                                className="uppercase"
                                 {...register("licenseSerial")}
                             />
                             {errors.licenseSerial && (
