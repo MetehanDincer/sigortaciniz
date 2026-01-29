@@ -65,24 +65,7 @@ export default function HomeInsurancePage() {
 
             if (!response.ok) console.error("Email hatası");
 
-            // 2. Format birth date as DD.MM.YYYY
-            const formattedDate = data.ownerBirthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
 
-            const message = `Merhaba, Konut/DASK Sigortası teklifi almak istiyorum:\n\n` +
-                `Sigorta Türü: ${data.productType === "dask" ? "DASK" : data.productType === "konut" ? "Konut" : "DASK ve Konut"}\n` +
-                `Tapu Sahibi TC: ${data.ownerTc}\n` +
-                `Tapu Sahibi Doğum Tarihi: ${formattedDate}\n` +
-                `Adres: ${data.address}\n` +
-                `Metrekare: ${data.squareMeters}\n` +
-                `Bina İnşa Yılı: ${data.buildYear}\n` +
-                `Binadaki Kat Sayısı: ${data.totalFloors}\n` +
-                `Bulunduğu Kat: ${data.floorLevel}\n` +
-                `Telefon Numarası: ${data.phoneNumber}`;
-
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;
-
-            window.open(whatsappUrl, '_blank');
             setIsSuccess(true)
         } catch (error) {
             alert("Bir hata oluştu. Lütfen tekrar deneyiniz.")

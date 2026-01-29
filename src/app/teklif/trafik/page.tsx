@@ -59,21 +59,6 @@ export default function TrafikSigortasiPage() {
 
             if (!response.ok) console.error("Email hatası");
 
-            // 2. Format birth date as DD.MM.YYYY
-            const formattedDate = data.birthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
-
-            // 3. Redirect to WhatsApp
-            const message = `Merhaba, Trafik Sigortası teklifi almak istiyorum:\n\n` +
-                `Plaka: ${data.plateNumber}\n` +
-                `TC/VKN: ${data.tcNumber}\n` +
-                `Doğum Tarihi: ${formattedDate}\n` +
-                `Ruhsat Seri: ${data.licenseSerial}\n` +
-                `Telefon: ${data.phoneNumber}`;
-
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;
-
-            window.open(whatsappUrl, '_blank');
             setIsSuccess(true)
         } catch (error) {
             alert("Bir hata oluştu. Lütfen tekrar deneyiniz.")

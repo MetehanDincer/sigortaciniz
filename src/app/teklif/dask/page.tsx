@@ -59,22 +59,6 @@ export default function DASKPage() {
 
             if (!response.ok) console.error("Email hatası");
 
-            // 2. Format birth date as DD.MM.YYYY
-            const formattedDate = data.ownerBirthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
-
-            const message = `Merhaba, DASK Sigortası teklifi almak istiyorum:\n\n` +
-                `TC: ${data.ownerTc}\n` +
-                `Doğum Tarihi: ${formattedDate}\n` +
-                `Telefon: ${data.phoneNumber}\n` +
-                `Adres: ${data.address}\n` +
-                `Alan: ${data.squareMeters} m2\n` +
-                `Kat: ${data.floorLevel}/${data.totalFloors}\n` +
-                `İnşa Yılı: ${data.buildYear}`;
-
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;
-
-            window.open(whatsappUrl, '_blank');
             setIsSuccess(true)
         } catch (error) {
             alert("Bir hata oluştu. Lütfen tekrar deneyiniz.")
