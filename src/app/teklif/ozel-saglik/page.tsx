@@ -36,15 +36,28 @@ export default function OzelSaglikPage() {
         resolver: zodResolver(formSchema),
     })
 
+    // Auto-format birth date with dots (DD.MM.YYYY)
+    const formatBirthDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) value = value.slice(0, 2) + '.' + value.slice(2);
+        if (value.length >= 5) value = value.slice(0, 5) + '.' + value.slice(5);
+        if (value.length > 10) value = value.slice(0, 10);
+        e.target.value = value;
+    };
+
     async function onSubmit(data: FormValues) {
         setIsSubmitting(true)
         try {
             // 1. Send email notification
-            await fetch("/api/contact", {
+            const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ type: "Özel Sağlık Sigortası", ...data }),
             })
+
+            if (!response.ok) console.error("Email hatası");
+
+            if (!response.ok) console.error("Email hatası");
 
             // 2. Format birth date as DD.MM.YYYY
             const formattedDate = data.birthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
@@ -120,8 +133,13 @@ export default function OzelSaglikPage() {
                                 <Label htmlFor="birthDate">Doğum Tarihi</Label>
                                 <Input
                                     id="birthDate"
-                                    placeholder="aa.gg.yyyy"
+                                    placeholder="GG.AA.YYYY"
+                                    maxLength={10}
                                     {...register("birthDate")}
+                                    onChange={(e) => {
+                                        formatBirthDate(e);
+                                        register("birthDate").onChange(e);
+                                    }}
                                 />
                                 {errors.birthDate && (
                                     <span className="text-xs text-destructive">
@@ -164,7 +182,8 @@ export default function OzelSaglikPage() {
                                 <Input
                                     id="phoneNumber"
                                     type="tel"
-                                    placeholder="05XX XXX XX XX"
+                                    placeholder="05XXXXXXXXX"
+                                    maxLength={11}
                                     {...register("phoneNumber")}
                                 />
                                 {errors.phoneNumber && (
