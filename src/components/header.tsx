@@ -3,12 +3,28 @@
 import Link from "next/link"
 import { Menu, X, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
-
+import { useState, useEffect } from "react"
 import Image from "next/image"
+import { createClient } from "@/lib/supabase/client"
 
 export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [user, setUser] = useState<any>(null)
+    const supabase = createClient()
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user: currentUser } } = await supabase.auth.getUser()
+            setUser(currentUser)
+        }
+        checkUser()
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null)
+        })
+
+        return () => subscription.unsubscribe()
+    }, [supabase])
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -42,6 +58,13 @@ export function Header() {
                     </a>
                     <Button asChild className="hidden sm:flex h-11 px-6 text-base font-semibold">
                         <Link href="/hizmetlerimiz">Teklif Al</Link>
+                    </Button>
+                    <Button asChild variant="outline" className="hidden sm:flex h-11 px-6 text-base font-semibold">
+                        {user ? (
+                            <Link href="/panel">Panelim</Link>
+                        ) : (
+                            <Link href="/giris">Giriş Yap</Link>
+                        )}
                     </Button>
                     <Button
                         variant="ghost"
@@ -97,6 +120,13 @@ export function Header() {
                             <Link href="/hizmetlerimiz" onClick={() => setMobileMenuOpen(false)}>
                                 Teklif Al
                             </Link>
+                        </Button>
+                        <Button asChild variant="outline" className="w-full">
+                            {user ? (
+                                <Link href="/panel" onClick={() => setMobileMenuOpen(false)}>Panelim</Link>
+                            ) : (
+                                <Link href="/giris" onClick={() => setMobileMenuOpen(false)}>Giriş Yap</Link>
+                            )}
                         </Button>
                     </nav>
                 </div>
