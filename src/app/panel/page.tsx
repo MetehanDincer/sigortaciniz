@@ -8,7 +8,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, FileText, CheckCircle, Wallet, Copy, LogOut } from "lucide-react"
+import { Users, FileText, CheckCircle, Wallet, Copy, LogOut, Eye, X } from "lucide-react"
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -22,6 +22,8 @@ export default function DashboardPage() {
     })
 
     const [leads, setLeads] = useState<any[]>([])
+    const [selectedLead, setSelectedLead] = useState<any>(null)
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false)
 
     useEffect(() => {
         const getData = async () => {
@@ -113,6 +115,12 @@ export default function DashboardPage() {
                                     <Button asChild variant="outline" className="h-16 px-8 text-lg font-extrabold shadow-sm">
                                         <Link href="/teklif/saglik">🏥 Sağlık</Link>
                                     </Button>
+                                    <Button asChild variant="secondary" className="h-16 px-8 text-lg font-extrabold shadow-sm bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200">
+                                        <Link href="/teklif/dask">🏠 DASK</Link>
+                                    </Button>
+                                    <Button asChild variant="outline" className="h-16 px-8 text-lg font-extrabold shadow-sm bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
+                                        <Link href="/teklif/konut">🏘️ Konut</Link>
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>
@@ -128,12 +136,12 @@ export default function DashboardPage() {
                                             <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 text-xs font-bold uppercase tracking-wider">
                                                 <th className="p-4">Tarih</th>
                                                 <th className="p-4">Hizmet</th>
+                                                <th className="p-4">Detay</th>
                                                 <th className="p-4">Durum</th>
-                                                <th className="p-4">Kazanç</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-50">
-                                            {leads.length > 0 ? leads.map((lead) => (
+                                            {leads.filter(l => l.status === 'Bekliyor').length > 0 ? leads.filter(l => l.status === 'Bekliyor').map((lead) => (
                                                 <tr key={lead.id} className="hover:bg-slate-50/50 transition-colors">
                                                     <td className="p-4 py-3 text-sm font-medium text-slate-600">
                                                         {new Date(lead.created_at).toLocaleDateString('tr-TR')}
@@ -142,10 +150,64 @@ export default function DashboardPage() {
                                                         <span className="text-sm font-bold text-slate-900">{lead.type}</span>
                                                     </td>
                                                     <td className="p-4 py-3">
-                                                        <span className={`px-2 py-1 rounded-full text-[10px] font-extrabold uppercase ${lead.status === 'Satışa Döndü' ? 'bg-green-100 text-green-700' :
-                                                            lead.status === 'İptal' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
-                                                            }`}>
-                                                            {lead.status}
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-8 px-2 text-primary hover:text-primary/80 font-bold gap-1 border border-primary/20"
+                                                            onClick={() => {
+                                                                setSelectedLead(lead)
+                                                                setIsDetailsOpen(true)
+                                                            }}
+                                                        >
+                                                            <Eye className="h-4 w-4" /> Form Gör
+                                                        </Button>
+                                                    </td>
+                                                    <td className="p-4 py-3">
+                                                        <span className="px-2 py-1 rounded-full text-[10px] font-extrabold uppercase bg-blue-100 text-blue-700">
+                                                            TEKLİF
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            )) : (
+                                                <tr>
+                                                    <td colSpan={3} className="p-8 text-center text-slate-400 font-medium italic">
+                                                        Henüz bir teklif oluşturulmamış.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="shadow-sm border-none overflow-hidden">
+                            <CardHeader className="bg-white border-b border-slate-100 flex flex-row items-center justify-between">
+                                <CardTitle>Poliçeleştirilen İşlemler</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                                                <th className="p-4">Tarih</th>
+                                                <th className="p-4">Hizmet</th>
+                                                <th className="p-4">Durum</th>
+                                                <th className="p-4">Kazanç</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50">
+                                            {leads.filter(l => l.status === 'Satışa Döndü').length > 0 ? leads.filter(l => l.status === 'Satışa Döndü').map((lead) => (
+                                                <tr key={lead.id} className="hover:bg-slate-50/50 transition-colors">
+                                                    <td className="p-4 py-3 text-sm font-medium text-slate-600">
+                                                        {new Date(lead.created_at).toLocaleDateString('tr-TR')}
+                                                    </td>
+                                                    <td className="p-4 py-3">
+                                                        <span className="text-sm font-bold text-slate-900">{lead.type}</span>
+                                                    </td>
+                                                    <td className="p-4 py-3">
+                                                        <span className="px-2 py-1 rounded-full text-[10px] font-extrabold uppercase bg-green-100 text-green-700">
+                                                            Poliçeleşti
                                                         </span>
                                                     </td>
                                                     <td className="p-4 py-3">
@@ -155,7 +217,7 @@ export default function DashboardPage() {
                                             )) : (
                                                 <tr>
                                                     <td colSpan={4} className="p-8 text-center text-slate-400 font-medium italic">
-                                                        Henüz bir teklif oluşturulmamış.
+                                                        Henüz poliçeleşen bir işleminiz bulunmuyor.
                                                     </td>
                                                 </tr>
                                             )}
@@ -180,6 +242,10 @@ export default function DashboardPage() {
                                 <p className="font-semibold">{profile.email}</p>
                             </div>
                             <div className="space-y-1">
+                                <p className="text-xs font-bold uppercase text-slate-400">Telefon</p>
+                                <p className="font-semibold">{profile.phone_number || 'Girilmedi'}</p>
+                            </div>
+                            <div className="space-y-1">
                                 <p className="text-xs font-bold uppercase text-slate-400">IBAN</p>
                                 <p className="font-semibold">{profile.iban || 'Henüz eklenmemiş'}</p>
                             </div>
@@ -187,14 +253,84 @@ export default function DashboardPage() {
                                 <p className="text-xs font-bold uppercase text-slate-400">Referans Kodunuz</p>
                                 <p className="font-bold text-primary">{profile.affiliate_id}</p>
                             </div>
-                            <Button variant="secondary" className="w-full font-bold">Profilini Düzenle</Button>
+                            <Button asChild variant="secondary" className="w-full font-bold">
+                                <Link href="/panel/profil">Profilini Düzenle</Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>
             </main>
             <Footer />
+
+            {/* Özel Modal - Yedek olarak eklendi, Shadcn sorunlarını baypas eder */}
+            {isDetailsOpen && selectedLead && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                        onClick={() => setIsDetailsOpen(false)}
+                    />
+                    <div className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+                        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <h3 className="text-xl font-extrabold text-slate-900">Teklif Detayları</h3>
+                            <button
+                                onClick={() => setIsDetailsOpen(false)}
+                                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                            >
+                                <X className="h-5 w-5 text-slate-500" />
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                            <div className="grid grid-cols-1 gap-3">
+                                {Object.entries(selectedLead.details).map(([key, value]: [string, any]) => (
+                                    <div key={key} className="flex flex-col p-3 rounded-xl bg-slate-50 border border-slate-100/50">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                            {getLabel(key)}
+                                        </span>
+                                        <span className="text-sm font-extrabold text-slate-900 break-all">
+                                            {String(value)}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="p-6 bg-slate-50/50 border-t border-slate-100">
+                            <Button className="w-full font-extrabold h-12 shadow-lg shadow-primary/20" onClick={() => setIsDetailsOpen(false)}>
+                                Kapat
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
+}
+
+function getLabel(key: string) {
+    const labels: any = {
+        tcNumber: "TC Kimlik No",
+        ownerTc: "TC Kimlik No",
+        birthDate: "Doğum Tarihi",
+        plateNumber: "Plaka",
+        licenseSerial: "Ruhsat Seri No",
+        phoneNumber: "Telefon",
+        phone: "Telefon",
+        fullName: "Ad Soyadı",
+        email: "E-Posta",
+        address: "Adres",
+        brand: "Marka",
+        model: "Model",
+        year: "Yıl",
+        productType: "Ürün Tipi",
+        travelDate: "Seyahat Tarihi",
+        duration: "Süre",
+        buildingAge: "Bina Yaşı",
+        floorCount: "Kat Sayısı",
+        floorNumber: "Bulunduğu Kat",
+        squareMeter: "Metrekare",
+        usageType: "Kullanım Şekli",
+        constructionType: "Yapı Tarzı"
+    }
+    return labels[key] || key
 }
 
 function StatCard({ title, value, icon }: { title: string, value: string | number, icon: React.ReactNode }) {
