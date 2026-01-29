@@ -36,18 +36,19 @@ export default function ContactPage() {
     async function onSubmit(data: FormValues) {
         setIsSubmitting(true)
         try {
-            const response = await fetch("/api/contact", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "İletişim Formu", ...data }),
-            })
+            // Statik export için mail servisi yerine WhatsApp yönlendirmesi kullanıyoruz
+            const message = `Merhaba, yeni bir iletişim formu talebim var:\n\n` +
+                `👤 Ad Soyad: ${data.name}\n` +
+                `📞 Telefon: ${data.phone}\n` +
+                `📧 E-posta: ${data.email}\n` +
+                `💬 Mesaj: ${data.message}`;
 
-            if (response.ok) {
-                setIsSuccess(true)
-                reset()
-            } else {
-                alert("Bir hata oluştu. Lütfen tekrar deneyin.")
-            }
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
+            setIsSuccess(true)
+            reset()
         } catch (error) {
             alert("Bağlantı hatası oluştu. Lütfen tekrar deneyin.")
         } finally {

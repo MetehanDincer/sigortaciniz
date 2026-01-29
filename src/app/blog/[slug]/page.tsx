@@ -230,6 +230,11 @@ const blogPosts = {
     `
     }
 }
+export async function generateStaticParams() {
+    return Object.keys(blogPosts).map((slug) => ({
+        slug: slug,
+    }))
+}
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params

@@ -16,8 +16,13 @@ import { Footer } from "@/components/footer"
 const formSchema = z.object({
     tcNumber: z.string().length(11, "TC Kimlik Numarası 11 haneli olmalıdır."),
     birthDate: z.string().min(1, "Doğum tarihi zorunludur."),
-    plateNumber: z.string().min(1, "Plaka zorunludur."),
-    licenseSerial: z.string().min(1, "Ruhsat Seri No zorunludur."),
+    plateNumber: z.string()
+        .min(1, "Plaka zorunludur.")
+        .regex(/^[A-Z0-9]+$/, "Plaka sadece büyük harf ve rakam içerebilir, boşluk kullanmayın.")
+        .transform(val => val.toUpperCase().replace(/\s/g, '')),
+    licenseSerial: z.string()
+        .regex(/^[A-Z]{2}\d{6}$/, "Ruhsat Seri No 2 harf ve 6 rakam olmalıdır (örn: AB123456).")
+        .transform(val => val.toUpperCase().replace(/\s/g, '')),
     phoneNumber: z.string().min(10, "Telefon numarası en az 10 haneli olmalıdır."),
 })
 
@@ -38,17 +43,29 @@ export default function KaskoSigortasiPage() {
     async function onSubmit(data: FormValues) {
         setIsSubmitting(true)
         try {
-            const response = await fetch("/api/contact", {
+            // 1. Send email notification
+            await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ type: "Kasko Sigortası", ...data }),
             })
 
-            if (response.ok) {
-                setIsSuccess(true)
-            } else {
-                alert("Bir hata oluştu. Lütfen tekrar deneyin.")
-            }
+            // 2. Format birth date as DD.MM.YYYY
+            const formattedDate = data.birthDate.replace(/(\d{2})(\d{2})(\d{4})/, '$1.$2.$3');
+
+            // 3. Redirect to WhatsApp
+            const message = `Merhaba, Kasko Sigortası teklifi almak istiyorum:\n\n` +
+                `🆔 TC: ${data.tcNumber}\n` +
+                `📅 Doğum Tarihi: ${formattedDate}\n` +
+                `🚗 Plaka: ${data.plateNumber}\n` +
+                `📄 Ruhsat Seri: ${data.licenseSerial}\n` +
+                `📞 Telefon: ${data.phoneNumber}`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/905379473464?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
+            setIsSuccess(true)
         } catch (error) {
             alert("Bir hata oluştu. Lütfen tekrar deneyiniz.")
         } finally {
