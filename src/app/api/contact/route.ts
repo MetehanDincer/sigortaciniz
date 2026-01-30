@@ -7,15 +7,15 @@ import { createClient } from "@/lib/supabase/server"
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { type, ...data } = body
+    const { type, referenceNumber, ...data } = body
 
-    // Get affiliate ID from cookies or current session
+    // Get affiliate ID from body, cookies or current session
     const cookieStore = await cookies()
-    let affiliateId = cookieStore.get('affiliate_id')?.value
+    let affiliateId = referenceNumber || cookieStore.get('affiliate_id')?.value
 
     const supabase = await createClient()
 
-    // Fallback: If no cookie, check if the user is logged in (submitting from dashboard)
+    // Fallback: If no affiliateId yet, check if the user is logged in
     if (!affiliateId) {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {

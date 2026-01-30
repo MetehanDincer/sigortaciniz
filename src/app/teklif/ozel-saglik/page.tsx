@@ -21,6 +21,7 @@ const formSchema = z.object({
         message: "Cinsiyet seçimi zorunludur.",
     }),
     phoneNumber: z.string().min(10, "Telefon numarası en az 10 haneli olmalıdır."),
+    referenceNumber: z.string().optional(),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -29,12 +30,17 @@ export default function OzelSaglikPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
     const [user, setUser] = useState<any>(null)
+    const [profile, setProfile] = useState<any>(null)
     const supabase = createClient()
 
     useEffect(() => {
         const checkUser = async () => {
             const { data: { user } } = await supabase.auth.getUser()
             setUser(user)
+            if (user) {
+                const { data: profileData } = await supabase.from('profiles').select('affiliate_id').eq('id', user.id).single()
+                setProfile(profileData)
+            }
         }
         checkUser()
     }, [])
@@ -42,10 +48,18 @@ export default function OzelSaglikPage() {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
     })
+
+    // Auto-populate reference number when profile is loaded
+    useEffect(() => {
+        if (profile?.affiliate_id) {
+            setValue("referenceNumber", profile.affiliate_id)
+        }
+    }, [profile, setValue])
 
     // Auto-format birth date with dots (DD.MM.YYYY)
     const formatBirthDate = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -192,6 +206,23 @@ export default function OzelSaglikPage() {
                                     </span>
                                 )}
                             </div>
+
+                            {profile?.affiliate_id && (
+                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-500">
+                                    <Label htmlFor="referenceNumber" className="text-primary font-bold flex items-center gap-2">
+                                        Referans Numaranız <span className="text-[10px] bg-primary/10 px-2 py-0.5 rounded text-primary uppercase">Otomatik</span>
+                                    </Label>
+                                    <Input
+                                        id="referenceNumber"
+                                        readOnly
+                                        className="bg-slate-50 border-primary/20 font-mono font-bold text-primary"
+                                        {...register("referenceNumber")}
+                                    />
+                                    <p className="text-[10px] text-slate-400 font-medium italic">
+                                        Bu numara size özeldir ve talebinizle birlikte iletilecektir.
+                                    </p>
+                                </div>
+                            )}
 
                             <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
                                 {isSubmitting ? "Gönderiliyor..." : "Teklif Al"}

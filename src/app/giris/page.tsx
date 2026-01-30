@@ -58,8 +58,8 @@ export default function LoginPage() {
                 <Card className="w-full max-w-md shadow-xl border-t-4 border-t-primary">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl font-bold text-center">Giriş Yap</CardTitle>
-                        <CardDescription className="text-center italic">
-                            Affiliate panelinize erişerek kazançlarınızı yönetin.
+                        <CardDescription className="text-center font-bold">
+                            İş ortağımız paneline giriş yaparak kazanç elde edebilirsiniz.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
