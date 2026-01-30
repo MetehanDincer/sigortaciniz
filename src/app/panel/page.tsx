@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
@@ -52,6 +52,14 @@ const PROCESS_STEPS = [
 ]
 
 export default function DashboardPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold">Yükleniyor...</div>}>
+            <DashboardContent />
+        </Suspense>
+    )
+}
+
+function DashboardContent() {
     const router = useRouter()
     const supabase = createClient()
     const [profile, setProfile] = useState<any>(null)
