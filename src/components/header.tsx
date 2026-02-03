@@ -144,13 +144,20 @@ export function Header() {
                     <Button asChild className="hidden sm:flex h-9 px-4 text-sm font-semibold">
                         <Link href="/hizmetlerimiz">Teklif Al</Link>
                     </Button>
-                    <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
-                        {user ? (
-                            <Link href="/panel">Panelim</Link>
-                        ) : (
-                            <Link href="/giris">Giriş Yap</Link>
+                    <div className="flex items-center gap-2">
+                        {isAdmin && (
+                            <Button asChild variant="ghost" className="hidden lg:flex h-9 px-3 text-sm font-bold text-primary hover:text-primary/80 hover:bg-primary/5">
+                                <Link href="/admin/operasyon">Yönetici Paneli</Link>
+                            </Button>
                         )}
-                    </Button>
+                        <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
+                            {user ? (
+                                <Link href="/panel">Panelim</Link>
+                            ) : (
+                                <Link href="/giris">Giriş Yap</Link>
+                            )}
+                        </Button>
+                    </div>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -231,13 +238,20 @@ export function Header() {
                                 Teklif Al
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" className="w-full">
-                            {user ? (
-                                <Link href="/panel" onClick={() => setMobileMenuOpen(false)}>Panelim</Link>
-                            ) : (
-                                <Link href="/giris" onClick={() => setMobileMenuOpen(false)}>Giriş Yap</Link>
+                        <div className="flex flex-col gap-2 w-full">
+                            {isAdmin && (
+                                <Button asChild variant="ghost" className="w-full justify-start font-bold text-primary py-2 px-4 h-auto">
+                                    <Link href="/admin/operasyon" onClick={() => setMobileMenuOpen(false)}>Yönetici Paneli</Link>
+                                </Button>
                             )}
-                        </Button>
+                            <Button asChild variant="outline" className="w-full">
+                                {user ? (
+                                    <Link href="/panel" onClick={() => setMobileMenuOpen(false)}>Panelim</Link>
+                                ) : (
+                                    <Link href="/giris" onClick={() => setMobileMenuOpen(false)}>Giriş Yap</Link>
+                                )}
+                            </Button>
+                        </div>
                     </nav>
                 </div>
             )}

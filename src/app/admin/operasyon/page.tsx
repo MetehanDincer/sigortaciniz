@@ -23,7 +23,8 @@ import {
     RefreshCw,
     UserCircle,
     Calculator,
-    Check
+    Check,
+    TrendingUp
 } from "lucide-react"
 
 import { EarningsModal } from "@/components/admin/earnings-modal"
@@ -256,8 +257,13 @@ function AdminDashboardContent() {
                         </div>
                         <p className="text-slate-500 font-medium">Hoş geldin, {adminProfile?.full_name}. Tüm operasyonları buradan yönetebilirsin.</p>
                     </div>
-                    <div className="flex gap-3">
-                        <Button variant="outline" className="gap-2 font-bold shadow-sm" onClick={handleLogout}>
+                    <div className="flex items-center gap-3">
+                        {adminProfile?.cfu_authorized && (
+                            <Button asChild variant="default" className="gap-2 font-black shadow-lg bg-indigo-600 hover:bg-indigo-700 h-10 px-6">
+                                <Link href="/admin/yonetim"><TrendingUp className="h-4 w-4" /> Yönetim Paneli</Link>
+                            </Button>
+                        )}
+                        <Button variant="outline" className="gap-2 font-bold shadow-sm h-10 px-4" onClick={handleLogout}>
                             <LogOut className="h-4 w-4" /> Güvenli Çıkış
                         </Button>
                         <AdminChatDialog />

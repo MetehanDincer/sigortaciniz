@@ -275,12 +275,17 @@ export function DashboardPageContent() {
                                         }}
                                     >
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <h4 className="font-semibold">{lead.full_name}</h4>
-                                                <span className="text-xs text-muted-foreground">{shortenId(lead.id)}</span>
+                                            <div className="mb-1">
+                                                <h4 className="font-bold text-lg text-foreground">
+                                                    {lead.full_name || lead.details?.fullName || lead.details?.full_name || 'İsimsiz Müşteri'}
+                                                </h4>
                                             </div>
-                                            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-                                                <span>{lead.insurance_type}</span>
+                                            <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                                                <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded italic">
+                                                    {shortenId(lead.id)}
+                                                </span>
+                                                <span>•</span>
+                                                <span className="font-medium text-primary/80">{lead.type || lead.insurance_type}</span>
                                                 <span>•</span>
                                                 <span>{new Date(lead.created_at).toLocaleDateString('tr-TR')}</span>
                                             </div>
@@ -354,7 +359,7 @@ export function DashboardPageContent() {
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <div>
                                             <label className="text-sm text-muted-foreground">Ad Soyad</label>
-                                            <p className="font-medium">{selectedLead.full_name}</p>
+                                            <p className="font-medium">{selectedLead.full_name || selectedLead.details?.fullName || selectedLead.details?.full_name || 'İsimsiz'}</p>
                                         </div>
                                         <div>
                                             <label className="text-sm text-muted-foreground">Telefon</label>
