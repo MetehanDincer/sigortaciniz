@@ -55,26 +55,13 @@ const PROCESS_STEPS = [
 export default function DashboardPage() {
     return (
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold">Yükleniyor...</div>}>
-            <DashboardWrapper />
+            <DashboardPageContent />
         </Suspense>
     )
 }
 
-function DashboardWrapper() {
+function DashboardPageContent() {
     const searchParams = useSearchParams()
-    const [leadsFilter, setLeadsFilter] = useState<'all' | 'issued'>('all')
-
-    useEffect(() => {
-        const filter = searchParams.get('filter')
-        if (filter === 'issued') {
-            setLeadsFilter('issued')
-        }
-    }, [searchParams])
-
-    return <DashboardContent initialFilter={leadsFilter} />
-}
-
-function DashboardContent({ initialFilter }: { initialFilter: 'all' | 'issued' }) {
     const router = useRouter()
     const supabase = createClient()
     const [profile, setProfile] = useState<any>(null)
@@ -86,10 +73,17 @@ function DashboardContent({ initialFilter }: { initialFilter: 'all' | 'issued' }
     })
 
     const [leads, setLeads] = useState<any[]>([])
-    const [leadsFilter, setLeadsFilter] = useState<'all' | 'issued'>(initialFilter)
+    const [leadsFilter, setLeadsFilter] = useState<'all' | 'issued'>('all')
     const [selectedLead, setSelectedLead] = useState<any>(null)
     const [isDetailsOpen, setIsDetailsOpen] = useState(false)
     const [viewerDoc, setViewerDoc] = useState<{ type: 'Offer' | 'Policy', url: string } | null>(null)
+
+    useEffect(() => {
+        const filter = searchParams.get('filter')
+        if (filter === 'issued') {
+            setLeadsFilter('issued')
+        }
+    }, [searchParams])
 
     useEffect(() => {
         const getData = async () => {
