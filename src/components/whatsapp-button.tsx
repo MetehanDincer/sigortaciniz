@@ -1,11 +1,18 @@
 "use client"
 
 import { MessageCircle } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 export function WhatsAppButton() {
+    const pathname = usePathname()
     const phoneNumber = "905379473464"
     const message = encodeURIComponent("Merhaba, sigorta teklifi hakkında bilgi almak istiyorum.")
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
+
+    // Don't show on admin or panel routes
+    if (pathname?.startsWith('/admin') || pathname?.startsWith('/panel')) {
+        return null
+    }
 
     return (
         <a

@@ -19,6 +19,15 @@ export async function middleware(request: NextRequest) {
         })
     }
 
+    // Capture source (QR, Link, Social)
+    const src = searchParams.get('src')
+    if (src) {
+        response.cookies.set('affiliate_source', src, {
+            maxAge: 60 * 60 * 24 * 30,
+            path: '/',
+        })
+    }
+
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

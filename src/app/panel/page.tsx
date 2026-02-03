@@ -9,7 +9,8 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, FileText, CheckCircle, Wallet, Copy, LogOut, Eye, X, ChevronRight, Clock, Download, ArrowLeft, TrendingUp, History, CreditCard } from "lucide-react"
+import { Users, FileText, CheckCircle, Wallet, Copy, LogOut, Eye, X, ChevronRight, Clock, Download, ArrowLeft, TrendingUp, History, CreditCard, ShieldCheck } from "lucide-react"
+import { QRCodeDialog } from "@/components/panel/qr-code-dialog"
 
 const shortenId = (id: string) => id ? `#T-${id.slice(0, 8).toUpperCase()}` : "";
 
@@ -143,6 +144,10 @@ function DashboardContent() {
                         <Button variant="outline" className="gap-2 font-bold shadow-sm" onClick={copyAffiliateLink}>
                             <Copy className="h-4 w-4" /> Linki Kopyala
                         </Button>
+                        <QRCodeDialog
+                            value={`${typeof window !== 'undefined' ? window.location.origin : ''}/?ref=${profile?.affiliate_id}`}
+                            partnerName={profile?.full_name || 'İş Ortağımız'}
+                        />
                         <Button asChild variant="secondary" className="gap-2 font-bold shadow-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200">
                             <Link href="/panel/cuzdan">
                                 <Wallet className="h-4 w-4" /> Cüzdanım
@@ -150,6 +155,11 @@ function DashboardContent() {
                         </Button>
                         <Button variant="destructive" className="gap-2 font-bold shadow-sm" onClick={handleLogout}>
                             <LogOut className="h-4 w-4" /> Çıkış
+                        </Button>
+                        <Button asChild variant="outline" className="gap-2 font-bold shadow-sm border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                            <Link href="/admin">
+                                <ShieldCheck className="h-4 w-4" /> Admin Paneli
+                            </Link>
                         </Button>
                     </div>
                 </div>

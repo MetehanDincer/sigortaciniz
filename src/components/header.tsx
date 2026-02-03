@@ -16,31 +16,54 @@ import {
 export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
+    const [isAdmin, setIsAdmin] = useState(false)
+    const [kurumsalOpen, setKurumsalOpen] = useState(false)
+    const [iptalOpen, setIptalOpen] = useState(false)
     const supabase = createClient()
 
     useEffect(() => {
         const checkUser = async () => {
             const { data: { user: currentUser } } = await supabase.auth.getUser()
             setUser(currentUser)
+
+            if (currentUser) {
+                const { data: adminData } = await supabase
+                    .from('admin_profiles')
+                    .select('admin_code')
+                    .eq('id', currentUser.id)
+                    .single()
+                setIsAdmin(!!adminData)
+            } else {
+                setIsAdmin(false)
+            }
         }
         checkUser()
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            const currentUser = session?.user ?? null
+            setUser(currentUser)
+
+            if (currentUser) {
+                const { data: adminData } = await supabase
+                    .from('admin_profiles')
+                    .select('admin_code')
+                    .eq('id', currentUser.id)
+                    .single()
+                setIsAdmin(!!adminData)
+            } else {
+                setIsAdmin(false)
+            }
         })
 
         return () => subscription.unsubscribe()
     }, [supabase])
 
-    const [kurumsalOpen, setKurumsalOpen] = useState(false)
-    const [iptalOpen, setIptalOpen] = useState(false)
-
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-20 lg:h-24 max-w-screen-2xl items-center justify-between px-4">
+            <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-4">
                 <div className="flex items-center">
-                    <Link href="/" className="flex items-center gap-1 transition-opacity hover:opacity-80">
-                        <div className="relative h-14 w-14 lg:h-16 lg:w-16 overflow-hidden rounded-xl">
+                    <Link href="/" className="flex items-center gap-1.5 transition-opacity hover:opacity-80">
+                        <div className="relative h-8 w-8 overflow-hidden rounded-lg">
                             <Image
                                 src="/logo.jpg"
                                 alt="Sigortacınız Logo"
@@ -48,12 +71,12 @@ export function Header() {
                                 className="object-cover"
                             />
                         </div>
-                        <span className="text-2xl lg:text-3xl font-extrabold tracking-tight text-primary leading-none mt-1">
+                        <span className="text-lg font-bold tracking-tight text-primary leading-none">
                             Sigortacınız<span className="text-foreground">.</span>com
                         </span>
                     </Link>
                 </div>
-                <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-base font-medium text-muted-foreground">
+                <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-muted-foreground">
                     <Link href="/" className="hover:text-primary transition-colors">Ana Sayfa</Link>
                     <Link href="/hizmetlerimiz" className="hover:text-primary transition-colors">Hizmetlerimiz</Link>
 
@@ -113,15 +136,15 @@ export function Header() {
 
                     <Link href="/iletisim" className="hover:text-primary transition-colors">İletişim</Link>
                 </nav>
-                <div className="flex items-center gap-4 lg:gap-6">
-                    <a href="tel:05379473464" className="hidden lg:flex items-center gap-2 text-foreground hover:text-primary transition-colors">
-                        <Phone className="h-5 w-5" />
-                        <span className="font-semibold text-base">0 537 947 34 64</span>
+                <div className="flex items-center gap-3">
+                    <a href="tel:05379473464" className="hidden lg:flex items-center gap-1.5 text-foreground hover:text-primary transition-colors">
+                        <Phone className="h-4 w-4" />
+                        <span className="font-semibold text-sm">0 537 947 34 64</span>
                     </a>
-                    <Button asChild className="hidden sm:flex h-11 px-6 text-base font-semibold">
+                    <Button asChild className="hidden sm:flex h-9 px-4 text-sm font-semibold">
                         <Link href="/hizmetlerimiz">Teklif Al</Link>
                     </Button>
-                    <Button asChild variant="outline" className="hidden sm:flex h-11 px-6 text-base font-semibold">
+                    <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
                         {user ? (
                             <Link href="/panel">Panelim</Link>
                         ) : (

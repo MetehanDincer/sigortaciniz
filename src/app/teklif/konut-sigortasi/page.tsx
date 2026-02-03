@@ -13,16 +13,18 @@ import { useState, useEffect } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { createClient } from "@/lib/supabase/client"
+import { maskTC, maskPhone, maskBirthDate, maskNumber } from "@/lib/masks"
+import { tcSchema, phoneSchema, birthDateSchema, buildYearSchema } from "@/lib/validations"
 
 const formSchema = z.object({
-    ownerTc: z.string().length(11, "Tapu Sahibi TC No 11 haneli olmalıdır."),
-    ownerBirthDate: z.string().min(1, "Tapu Sahibi Doğum Tarihi zorunludur."),
+    ownerTc: tcSchema,
+    ownerBirthDate: birthDateSchema,
     address: z.string().min(5, "Açık adres zorunludur."),
     squareMeters: z.string().min(1, "Metrekare zorunludur."),
     totalFloors: z.string().min(1, "Kat sayısı zorunludur."),
     floorLevel: z.string().min(1, "Bulunduğu kat zorunludur."),
-    buildYear: z.string().min(4, "Bina inşa yılı zorunludur."),
-    phoneNumber: z.string().min(10, "Telefon numarası en az 10 haneli olmalıdır."),
+    buildYear: buildYearSchema,
+    phoneNumber: phoneSchema,
     referenceNumber: z.string().optional(),
 })
 
@@ -63,14 +65,6 @@ export default function KonutSigortasiPage() {
         }
     }, [profile, setValue])
 
-    // Auto-format birth date with dots (DD.MM.YYYY)
-    const formatBirthDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) value = value.slice(0, 2) + '.' + value.slice(2);
-        if (value.length >= 5) value = value.slice(0, 5) + '.' + value.slice(5);
-        if (value.length > 10) value = value.slice(0, 10);
-        e.target.value = value;
-    };
 
     async function onSubmit(data: FormValues) {
         setIsSubmitting(true)
@@ -135,6 +129,10 @@ export default function KonutSigortasiPage() {
                                     placeholder="11 haneli TC no"
                                     maxLength={11}
                                     {...register("ownerTc")}
+                                    onChange={(e) => {
+                                        e.target.value = maskTC(e.target.value);
+                                        register("ownerTc").onChange(e);
+                                    }}
                                 />
                                 {errors.ownerTc && (
                                     <span className="text-xs text-destructive">
@@ -151,7 +149,7 @@ export default function KonutSigortasiPage() {
                                     maxLength={10}
                                     {...register("ownerBirthDate")}
                                     onChange={(e) => {
-                                        formatBirthDate(e);
+                                        e.target.value = maskBirthDate(e.target.value);
                                         register("ownerBirthDate").onChange(e);
                                     }}
                                 />
@@ -195,9 +193,13 @@ export default function KonutSigortasiPage() {
                                     <Label htmlFor="buildYear">Bina İnşa Yılı</Label>
                                     <Input
                                         id="buildYear"
-                                        type="number"
                                         placeholder="2010"
+                                        maxLength={4}
                                         {...register("buildYear")}
+                                        onChange={(e) => {
+                                            e.target.value = maskNumber(e.target.value, 4);
+                                            register("buildYear").onChange(e);
+                                        }}
                                     />
                                     {errors.buildYear && (
                                         <span className="text-xs text-destructive">
@@ -246,6 +248,10 @@ export default function KonutSigortasiPage() {
                                     placeholder="05XXXXXXXXX"
                                     maxLength={11}
                                     {...register("phoneNumber")}
+                                    onChange={(e) => {
+                                        e.target.value = maskPhone(e.target.value);
+                                        register("phoneNumber").onChange(e);
+                                    }}
                                 />
                                 {errors.phoneNumber && (
                                     <span className="text-xs text-destructive">

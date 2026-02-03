@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     // Get affiliate ID from body, cookies or current session
     const cookieStore = await cookies()
     let affiliateId = referenceNumber || cookieStore.get('affiliate_id')?.value
+    let referralSource = cookieStore.get('affiliate_source')?.value
 
     const supabase = await createClient()
 
@@ -68,16 +69,60 @@ export async function POST(request: Request) {
       await transporter.sendMail(mailOptions)
     }
 
-    // 3. Save to Supabase Leads table
-    const { error: dbError } = await supabase.from('leads').insert({
+    // 3. Round Robin Assignment Logic
+    // Get all active admins ordered by admin_code
+    const { data: admins } = await supabase
+      .from('admin_profiles')
+      .select('id, admin_code')
+      .eq('is_active', true)
+      .order('admin_code', { ascending: true })
+
+    let assignedAdminId = null
+    let assignedAdminCode = "Sistem"
+
+    if (admins && admins.length > 0) {
+      // Get the last assigned admin_id from leads to see who's next
+      const { data: lastLead } = await supabase
+        .from('leads')
+        .select('assigned_admin_id')
+        .not('assigned_admin_id', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (!lastLead) {
+        // First lead ever: assign to the first admin
+        assignedAdminId = admins[0].id
+        assignedAdminCode = admins[0].admin_code
+      } else {
+        // Find the index of the last admin and pick the next one
+        const lastIndex = admins.findIndex(a => a.id === lastLead.assigned_admin_id)
+        const nextIndex = (lastIndex + 1) % admins.length
+        assignedAdminId = admins[nextIndex].id
+        assignedAdminCode = admins[nextIndex].admin_code
+      }
+    }
+
+    // 4. Save to Supabase Leads table
+    const { data: lead, error: dbError } = await supabase.from('leads').insert({
       affiliate_id: affiliateId || null,
       type: type,
-      details: data,
-      status: 'Bekliyor'
-    })
+      details: { ...data, referral_source: referralSource },
+      status: 'Bekliyor',
+      assigned_admin_id: assignedAdminId
+    }).select().single()
 
     if (dbError) {
       console.error("❌ Veritabanı kayıt hatası:", dbError)
+    }
+
+    // 5. Create Initial Log
+    if (lead) {
+      await supabase.from('lead_logs').insert({
+        lead_id: lead.id,
+        action: 'ASSIGNED',
+        details: `Teklif talebi alındı ve otomatik olarak ${assignedAdminCode} kodlu admine atandı.`
+      })
     }
 
     return NextResponse.json({ success: true, message: "Form başarıyla alındı." })

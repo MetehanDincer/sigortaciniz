@@ -8,13 +8,15 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Wallet, ArrowLeft, TrendingUp, History, Download, CreditCard, CheckCircle } from "lucide-react"
+import { Wallet, ArrowLeft, TrendingUp, History, Download, CreditCard, CheckCircle, ArrowDownLeft, ArrowUpRight } from "lucide-react"
+import { formatCurrency } from "@/lib/finance/earnings-calculator"
 
 export default function WalletPage() {
     const router = useRouter()
     const supabase = createClient()
     const [profile, setProfile] = useState<any>(null)
     const [soldLeadsCount, setSoldLeadsCount] = useState(0)
+    const [transactions, setTransactions] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -36,6 +38,17 @@ export default function WalletPage() {
                     .eq('status', 'Satışa Döndü')
 
                 setSoldLeadsCount(leadsData?.length || 0)
+
+                // Fetch transactions
+                const { data: transactionsData } = await supabase
+                    .from('wallet_transactions')
+                    .select('*')
+                    .eq('partner_id', user.id)
+                    .order('created_at', { ascending: false })
+
+                if (transactionsData) {
+                    setTransactions(transactionsData)
+                }
             }
             setLoading(false)
         }
@@ -102,12 +115,78 @@ export default function WalletPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
-                        <Card className="shadow-sm border-none overflow-hidden h-full text-center p-12 flex flex-col items-center justify-center bg-white">
-                            <div className="bg-slate-50 p-6 rounded-full mb-4">
-                                <History className="h-10 w-10 text-slate-300" />
-                            </div>
-                            <h3 className="text-xl font-extrabold text-slate-900 mb-2">Henüz işlem bulunmuyor</h3>
-                            <p className="text-slate-500 font-medium max-w-sm mx-auto">Satışlarınız onaylandığında kazançlarınız burada listelenecektir.</p>
+                        <Card className="shadow-sm border-none overflow-hidden h-full bg-white">
+                            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="flex items-center gap-2">
+                                        <History className="h-5 w-5 text-primary" />
+                                        İşlem Geçmişi
+                                    </CardTitle>
+                                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-primary">
+                                        <Download className="h-4 w-4 mr-2" />
+                                        Döküm Al
+                                    </Button>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                {transactions.length > 0 ? (
+                                    <div className="divide-y divide-slate-100">
+                                        {transactions.map((tx) => (
+                                            <div key={tx.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`p-3 rounded-full ${tx.transaction_type === 'earning_credit'
+                                                            ? 'bg-green-100 text-green-600'
+                                                            : tx.transaction_type === 'withdrawal'
+                                                                ? 'bg-red-100 text-red-600'
+                                                                : 'bg-blue-100 text-blue-600'
+                                                        }`}>
+                                                        {tx.transaction_type === 'earning_credit' ? (
+                                                            <ArrowDownLeft className="h-5 w-5" />
+                                                        ) : (
+                                                            <ArrowUpRight className="h-5 w-5" />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-slate-900">
+                                                            {tx.transaction_type === 'earning_credit' ? 'Kazanç Yansıması' : 'Ödeme Çıkışı'}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500 font-medium">
+                                                            {new Date(tx.created_at).toLocaleDateString('tr-TR', {
+                                                                day: 'numeric',
+                                                                month: 'long',
+                                                                year: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            })}
+                                                        </p>
+                                                        {tx.notes && (
+                                                            <p className="text-xs text-slate-400 mt-0.5">{tx.notes}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className={`font-black text-lg ${tx.transaction_type === 'earning_credit' ? 'text-green-600' : 'text-slate-900'
+                                                        }`}>
+                                                        {tx.transaction_type === 'earning_credit' ? '+' : '-'}
+                                                        {formatCurrency(tx.amount)}
+                                                    </p>
+                                                    <p className="text-xs text-slate-400 font-medium">
+                                                        Bakiye: {formatCurrency(tx.balance_after)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center p-12 flex flex-col items-center justify-center">
+                                        <div className="bg-slate-50 p-6 rounded-full mb-4">
+                                            <History className="h-10 w-10 text-slate-300" />
+                                        </div>
+                                        <h3 className="text-xl font-extrabold text-slate-900 mb-2">Henüz işlem bulunmuyor</h3>
+                                        <p className="text-slate-500 font-medium max-w-sm mx-auto">Satışlarınız onaylandığında kazançlarınız burada listelenecektir.</p>
+                                    </div>
+                                )}
+                            </CardContent>
                         </Card>
                     </div>
 

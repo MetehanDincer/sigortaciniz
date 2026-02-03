@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 import { WhatsAppButton } from "@/components/whatsapp-button";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Sigortacınız.com | Hızlı ve Güvenilir Sigorta Çözümleri",
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         {children}
         <WhatsAppButton />
+        <Toaster />
       </body>
     </html>
   );

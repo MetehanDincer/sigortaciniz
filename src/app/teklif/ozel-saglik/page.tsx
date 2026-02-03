@@ -13,14 +13,16 @@ import { useState, useEffect } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { createClient } from "@/lib/supabase/client"
+import { maskTC, maskPhone, maskBirthDate } from "@/lib/masks"
+import { tcSchema, phoneSchema, birthDateSchema } from "@/lib/validations"
 
 const formSchema = z.object({
-    tcNumber: z.string().length(11, "TC Kimlik Numarası 11 haneli olmalıdır."),
-    birthDate: z.string().min(1, "Doğum tarihi zorunludur."),
+    tcNumber: tcSchema,
+    birthDate: birthDateSchema,
     gender: z.enum(["erkek", "kadin"]).refine((val) => val !== undefined, {
         message: "Cinsiyet seçimi zorunludur.",
     }),
-    phoneNumber: z.string().min(10, "Telefon numarası en az 10 haneli olmalıdır."),
+    phoneNumber: phoneSchema,
     referenceNumber: z.string().optional(),
 })
 
@@ -61,14 +63,6 @@ export default function OzelSaglikPage() {
         }
     }, [profile, setValue])
 
-    // Auto-format birth date with dots (DD.MM.YYYY)
-    const formatBirthDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) value = value.slice(0, 2) + '.' + value.slice(2);
-        if (value.length >= 5) value = value.slice(0, 5) + '.' + value.slice(5);
-        if (value.length > 10) value = value.slice(0, 10);
-        e.target.value = value;
-    };
 
     async function onSubmit(data: FormValues) {
         setIsSubmitting(true)
@@ -135,6 +129,10 @@ export default function OzelSaglikPage() {
                                     placeholder="11 haneli TC no"
                                     maxLength={11}
                                     {...register("tcNumber")}
+                                    onChange={(e) => {
+                                        e.target.value = maskTC(e.target.value);
+                                        register("tcNumber").onChange(e);
+                                    }}
                                 />
                                 {errors.tcNumber && (
                                     <span className="text-xs text-destructive">
@@ -151,7 +149,7 @@ export default function OzelSaglikPage() {
                                     maxLength={10}
                                     {...register("birthDate")}
                                     onChange={(e) => {
-                                        formatBirthDate(e);
+                                        e.target.value = maskBirthDate(e.target.value);
                                         register("birthDate").onChange(e);
                                     }}
                                 />
@@ -199,6 +197,10 @@ export default function OzelSaglikPage() {
                                     placeholder="05XXXXXXXXX"
                                     maxLength={11}
                                     {...register("phoneNumber")}
+                                    onChange={(e) => {
+                                        e.target.value = maskPhone(e.target.value);
+                                        register("phoneNumber").onChange(e);
+                                    }}
                                 />
                                 {errors.phoneNumber && (
                                     <span className="text-xs text-destructive">
