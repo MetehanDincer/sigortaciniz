@@ -143,7 +143,7 @@ export function PartnerChatWidget() {
                                 <Bot className="h-5 w-5" />
                             </div>
                             <div>
-                                <CardTitle className="text-sm font-bold">Sigortacınız Asistan</CardTitle>
+                                <CardTitle className="text-sm font-bold text-slate-800">Uygun Sigortacı Asistan</CardTitle>
                                 <p className="text-[10px] text-indigo-200">7/24 Yanınızdayız</p>
                             </div>
                         </div>

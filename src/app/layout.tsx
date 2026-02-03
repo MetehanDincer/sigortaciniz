@@ -16,7 +16,7 @@ import { WhatsAppButton } from "@/components/whatsapp-button";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Sigortacınız.com | Hızlı ve Güvenilir Sigorta Çözümleri",
+  title: "UygunSigortaci.com | Hızlı ve Güvenilir Sigorta Çözümleri",
   description: "Aracınız, sağlığınız ve eviniz için en uygun sigorta tekliflerini saniyeler içinde alın.",
 };
 

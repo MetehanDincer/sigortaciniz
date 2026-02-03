@@ -65,7 +65,7 @@ export function QRCodeDialog({ value, title = "Referans QR Kodu", partnerName = 
                 ctx.fillStyle = "#334155"; // Slate-700
                 ctx.font = "bold 50px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText(`Sigortacınız / ${partnerName}`, canvasWidth / 2, 100);
+                ctx.fillText(`Uygun Sigortacı / ${partnerName}`, canvasWidth / 2, 100);
 
                 // Draw QR Image
                 ctx.drawImage(img, 0, 150, 1000, 1000)
@@ -73,7 +73,7 @@ export function QRCodeDialog({ value, title = "Referans QR Kodu", partnerName = 
                 const pngUrl = canvas.toDataURL("image/png")
                 const downloadLink = document.createElement("a")
                 downloadLink.href = pngUrl
-                downloadLink.download = `sigortaciniz-qr-code.png`
+                downloadLink.download = `uygun-sigortaci-qr-code.png`
                 document.body.appendChild(downloadLink)
                 downloadLink.click()
                 document.body.removeChild(downloadLink)
@@ -115,23 +115,23 @@ export function QRCodeDialog({ value, title = "Referans QR Kodu", partnerName = 
                             ctx.fillStyle = "#334155";
                             ctx.font = "bold 50px sans-serif";
                             ctx.textAlign = "center";
-                            ctx.fillText(`Sigortacınız / ${partnerName}`, canvasWidth / 2, 100);
+                            ctx.fillText(`Uygun Sigortacı / ${partnerName}`, canvasWidth / 2, 100);
 
                             ctx.drawImage(img, 0, 150, 1000, 1000)
 
                             canvas.toBlob(async (blob) => {
                                 if (blob) {
-                                    const file = new File([blob], "sigortaciniz-qr.png", { type: "image/png" })
+                                    const file = new File([blob], "uygun-sigortaci-qr.png", { type: "image/png" })
                                     try {
                                         await navigator.share({
-                                            title: 'Sigortacınız Referans',
+                                            title: 'Uygun Sigortacı Referans',
                                             text: shareText,
                                             files: [file]
                                         })
                                     } catch (e) {
                                         // Fallback to text share if file share fails
                                         await navigator.share({
-                                            title: 'Sigortacınız Referans',
+                                            title: 'Uygun Sigortacı Referans',
                                             text: shareText,
                                             url: shareUrl
                                         })
@@ -143,7 +143,7 @@ export function QRCodeDialog({ value, title = "Referans QR Kodu", partnerName = 
                     img.src = url
                 } else {
                     await navigator.share({
-                        title: 'Sigortacınız Referans',
+                        title: 'Uygun Sigortacı Referans',
                         text: shareText,
                         url: shareUrl
                     })
@@ -201,7 +201,7 @@ export function QRCodeDialog({ value, title = "Referans QR Kodu", partnerName = 
                 </DialogHeader>
                 <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-xl border border-slate-100">
                     <div className="text-center font-bold text-lg text-slate-800 mb-4 bg-white px-6 py-2 rounded-lg shadow-sm border border-slate-100">
-                        Sigortacınız / {partnerName}
+                        Uygun Sigortacı / {partnerName}
                     </div>
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                         <QRCodeSVG

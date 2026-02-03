@@ -45,7 +45,7 @@ const blogPosts = {
         <li><strong>En Önemlisi:</strong> Bir kaza yapıp karşı tarafa 500.000 TL zarar verirseniz, sigortanız olmadığı için bu parayı cebinizden ödemek zorunda kalırsınız.</li>
       </ul>
 
-      <p class="mt-8">Siz de yola güvenle çıkmak ve bütçenizi korumak için <strong>Sigortacınız.com.tr</strong> üzerinden en uygun trafik sigortası tekliflerini inceleyebilirsiniz.</p>
+      <p class="mt-8">Siz de yola güvenle çıkmak ve bütçenizi korumak için <strong>UygunSigortaci.com</strong> üzerinden en uygun trafik sigortası tekliflerini inceleyebilirsiniz.</p>
     `
     },
     "kasko-yaptirirken-dikkat-edilmesi-gerekenler": {
@@ -197,7 +197,7 @@ const blogPosts = {
       <p class="mb-4"><strong>Şu durumda TSS seçin:</strong> SGK'lıysanız, bütçeniz kısıtlıysa ve kaliteli ama çok yüksek maliyetli olmayan özel hastanelerde (Medicana, Medical Park vb.) tedavi olmak istiyorsanız.</p>
       <p class="mb-6"><strong>Şu durumda ÖSS seçin:</strong> SGK'lı değilseniz, bütçeniz müsaitse ve Amerikan Hastanesi, Acıbadem gibi en üst segment (A Plus) hastaneleri de kapsama dahil etmek istiyorsanız.</p>
 
-      <p class="italic text-muted-foreground">İhtiyacınıza en uygun poliçeyi belirlemek için Sigortacınız.com.tr uzmanlarına Whatsapp hattımızdan ulaşabilirsiniz.</p>
+      <p class="italic text-muted-foreground">İhtiyacınıza en uygun poliçeyi belirlemek için Uygun Sigortacı uzmanlarına Whatsapp hattımızdan ulaşabilirsiniz.</p>
     `
     },
     "konut-sigortasi-neden-gerekli": {

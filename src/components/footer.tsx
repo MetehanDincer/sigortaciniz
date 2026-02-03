@@ -14,13 +14,13 @@ export function Footer() {
                             <div className="relative h-10 w-10 overflow-hidden rounded-md">
                                 <Image
                                     src="/logo.jpg"
-                                    alt="Sigortacınız Logo"
+                                    alt="Uygun Sigortacı Logo"
                                     fill
                                     className="object-cover"
                                 />
                             </div>
                             <span className="text-xl font-bold text-foreground">
-                                Sigortacınız<span className="text-foreground">.</span>com
+                                UygunSigortacı<span className="text-foreground">.</span>com
                             </span>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
@@ -31,9 +31,9 @@ export function Footer() {
                                 <Phone className="h-4 w-4 text-primary" />
                                 <span>0 537 947 34 64</span>
                             </a>
-                            <a href="mailto:info@sigortaciniz.com" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                            <a href="mailto:info@uygunsigortaci.com" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                                 <Mail className="h-4 w-4 text-primary" />
-                                <span>info@sigortaciniz.com</span>
+                                <span>info@uygunsigortaci.com</span>
                             </a>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ export function Footer() {
 
                 <div className="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-muted-foreground text-center md:text-left">
-                        © 2024 Sigortacınız. Tüm hakları saklıdır.
+                        © 2024 Uygun Sigortacı. Tüm hakları saklıdır.
                     </p>
                     <div className="flex gap-4">
                         <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">

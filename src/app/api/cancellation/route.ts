@@ -37,7 +37,7 @@ export async function POST(request: Request) {
         }
 
         const mailOptions = {
-            from: '"Sigortacınız Web Sitesi" <sigortaciniz.2025@gmail.com>',
+            from: '"Uygun Sigortacı Web Sitesi" <sigortaciniz.2025@gmail.com>',
             to: "sigortaciniz.2025@gmail.com",
             subject: `🚨 İptal Talebi: ${type} - ${plate}`,
             html: `

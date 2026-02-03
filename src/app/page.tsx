@@ -95,7 +95,7 @@ export default function LandingPage() {
                           />
                         </div>
                         <span className="font-bold text-primary text-sm">
-                          Sigortacınız<span className="text-foreground">.</span>com
+                          UygunSigortacı<span className="text-foreground">.</span>com
                         </span>
                       </div>
                       <Menu className="h-4 w-4 text-gray-400" />
@@ -300,11 +300,11 @@ export default function LandingPage() {
 
             <div className="max-w-4xl mx-auto space-y-8 text-center">
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold text-foreground">Sigortacınız ile Geleceğiniz Güvende</h3>
+                <h3 className="text-2xl font-bold text-foreground">Uygun Sigortacı ile Geleceğiniz Güvende</h3>
                 <p className="text-lg text-muted-foreground leading-relaxed">
                   Sigorta sektöründeki deneyimimiz ve müşteri odaklı yaklaşımımızla,
                   sizlere en uygun ve en kapsamlı sigorta ürünlerini sunmanın gururunu yaşıyoruz.
-                  <span className="text-primary font-semibold"> Sigortacınız</span>, sadece bir poliçe satıcısı değil,
+                  <span className="text-primary font-semibold"> Uygun Sigortacı</span>, sadece bir poliçe satıcısı değil,
                   hayatınızın her anında yanınızda olan güvenilir bir dostunuzdur.
                 </p>
               </div>
@@ -333,7 +333,7 @@ export default function LandingPage() {
 
               <div className="bg-primary/5 p-8 rounded-xl border border-primary/20">
                 <p className="text-lg text-foreground leading-relaxed">
-                  <span className="font-bold text-primary">Sigortacınız</span> olarak,
+                  <span className="font-bold text-primary">Uygun Sigortacı</span> olarak,
                   müşterilerimizin memnuniyetini her şeyin üstünde tutuyoruz.
                   Değişen ihtiyaçlarınıza göre ürün ve hizmetlerimizi sürekli geliştiriyor,
                   teknolojik altyapımızı güçlendirerek size daha hızlı ve kolay hizmet sunmanın

@@ -120,8 +120,8 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-xl mb-1">E-posta</h3>
-                                        <a href="mailto:info@sigortaciniz.com" className="text-muted-foreground hover:text-primary transition-colors text-lg font-medium">
-                                            info@sigortaciniz.com
+                                        <a href="mailto:info@uygunsigortaci.com" className="text-muted-foreground hover:text-primary transition-colors text-lg font-medium">
+                                            info@uygunsigortaci.com
                                         </a>
                                         <p className="text-sm text-muted-foreground mt-1">7/24 Bize yazabilirsiniz</p>
                                     </div>
@@ -210,13 +210,13 @@ export default function ContactPage() {
                                 <div className="relative h-80 w-80 grayscale group-hover:grayscale-0 transition-all duration-500">
                                     <Image
                                         src="/logo.jpg"
-                                        alt="Sigortacınız Logo"
+                                        alt="Uygun Sigortacı Logo"
                                         fill
                                         className="object-contain"
                                     />
                                 </div>
                                 <span className="mt-4 text-3xl font-bold text-muted-foreground/60 group-hover:text-primary transition-colors duration-500">
-                                    Sigortacınız<span className="text-primary group-hover:text-foreground">.</span>com
+                                    UygunSigortacı<span className="text-primary group-hover:text-foreground">.</span>com
                                 </span>
                             </div>
                         </div>

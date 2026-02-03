@@ -1,7 +1,7 @@
 import { CancellationForm } from "@/components/cancellation-form"
 
 export const metadata = {
-    title: "Trafik Sigortası İptali | Sigortacınız.com",
+    title: "Trafik Sigortası İptali | UygunSigortaci.com",
     description: "Trafik sigortası iptal talebi oluşturun."
 }
 

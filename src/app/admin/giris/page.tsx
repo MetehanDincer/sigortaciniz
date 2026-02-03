@@ -113,7 +113,7 @@ export default function AdminLoginPage() {
                                         id="email"
                                         name="email"
                                         type="email"
-                                        placeholder="admin@sigortaciniz.com"
+                                        placeholder="admin@uygunsigortaci.com"
                                         required
                                         className="bg-slate-900 border-slate-700 text-white pl-10 focus:ring-primary focus:border-primary"
                                     />

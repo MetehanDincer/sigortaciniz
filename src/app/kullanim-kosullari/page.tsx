@@ -17,21 +17,21 @@ export default function TermsOfUsePage() {
                             <section>
                                 <h2 className="text-2xl font-bold text-foreground mb-4">1. Taraflar ve Tanımlar</h2>
                                 <p>
-                                    İşbu sözleşme, Meşrutiyet Mah. Rumeli Cad. Konfor Çarşısı No:40 Nişantaşı / İstanbul adresinde mukim <strong>Sigortaciniz.com</strong> (bundan sonra "Şirket" olarak anılacaktır) ile web sitesini ziyaret eden veya hizmetlerden yararlanan gerçek/tüzel kişiler (bundan sonra "Kullanıcı" olarak anılacaktır) arasındaki kullanım şartlarını belirler.
+                                    İşbu sözleşme, Meşrutiyet Mah. Rumeli Cad. Konfor Çarşısı No:40 Nişantaşı / İstanbul adresinde mukim <strong>UygunSigortaci.com</strong> (bundan sonra "Şirket" olarak anılacaktır) ile web sitesini ziyaret eden veya hizmetlerden yararlanan gerçek/tüzel kişiler (bundan sonra "Kullanıcı" olarak anılacaktır) arasındaki kullanım şartlarını belirler.
                                 </p>
                             </section>
 
                             <section>
                                 <h2 className="text-2xl font-bold text-foreground mb-4">2. Hizmetin Kapsamı</h2>
                                 <p>
-                                    Sigortaciniz.com, sigorta sözleşmesi yaptırmak isteyen kullanıcılar ile sigorta şirketlerini bir araya getiren bir aracılık platformudur. Şirketimiz, sigorta şirketlerinden teklif alarak kullanıcıya sunar ve poliçe düzenleme süreçlerine rehberlik eder. Sigorta teminatı ve tazminat ödemeleri tamamen ilgili sigorta şirketinin sorumluluğundadır.
+                                    UygunSigortaci.com, sigorta sözleşmesi yaptırmak isteyen kullanıcılar ile sigorta şirketlerini bir araya getiren bir aracılık platformudur. Şirketimiz, sigorta şirketlerinden teklif alarak kullanıcıya sunar ve poliçe düzenleme süreçlerine rehberlik eder. Sigorta teminatı ve tazminat ödemeleri tamamen ilgili sigorta şirketinin sorumluluğundadır.
                                 </p>
                             </section>
 
                             <section>
                                 <h2 className="text-2xl font-bold text-foreground mb-4">3. Bilgilerin Doğruluğu</h2>
                                 <p>
-                                    Kullanıcı, teklif alma ve poliçe düzenleme aşamalarında verdiği bilgilerin (T.C. Kimlik No, araç bilgileri, sağlık beyanı vb.) eksiksiz ve doğru olduğunu taahhüt eder. Yanlış veya eksik beyanlardan dolayı doğabilecek poliçe iptali veya tazminat ödenmemesi durumlarında Sigortaciniz.com sorumlu tutulamaz. Verdiğiniz bilgilerin doğruluğu sigorta poliçenizin geçerliliği için kritik önem taşır.
+                                    Kullanıcı, teklif alma ve poliçe düzenleme aşamalarında verdiği bilgilerin (T.C. Kimlik No, araç bilgileri, sağlık beyanı vb.) eksiksiz ve doğru olduğunu taahhüt eder. Yanlış veya eksik beyanlardan dolayı doğabilecek poliçe iptali veya tazminat ödenmemesi durumlarında UygunSigortaci.com sorumlu tutulamaz. Verdiğiniz bilgilerin doğruluğu sigorta poliçenizin geçerliliği için kritik önem taşır.
                                 </p>
                             </section>
 
@@ -45,7 +45,7 @@ export default function TermsOfUsePage() {
                             <section>
                                 <h2 className="text-2xl font-bold text-foreground mb-4">5. Fikri Mülkiyet Hakları</h2>
                                 <p>
-                                    Sigortaciniz.com web sitesinde yer alan logo, tasarım, marka, yazılım, metin ve görsellerin tüm fikri ve sınai mülkiyet hakları Şirketimize aittir. İşbu materyallerin izinsiz kopyalanması, çoğaltılması, dağıtılması veya ticari amaçla kullanılması yasaktır ve yasal yaptırımlara tabidir.
+                                    UygunSigortaci.com web sitesinde yer alan logo, tasarım, marka, yazılım, metin ve görsellerin tüm fikri ve sınai mülkiyet hakları Şirketimize aittir. İşbu materyallerin izinsiz kopyalanması, çoğaltılması, dağıtılması veya ticari amaçla kullanılması yasaktır ve yasal yaptırımlara tabidir.
                                 </p>
                             </section>
 
@@ -59,7 +59,7 @@ export default function TermsOfUsePage() {
                             <section>
                                 <h2 className="text-2xl font-bold text-foreground mb-4">7. Sözleşme Değişiklikleri</h2>
                                 <p>
-                                    Sigortaciniz.com, işbu Kullanım Koşulları'nı ve Kullanıcı Sözleşmesi'ni dilediği zaman, önceden haber vermeksizin güncelleme veya değiştirme hakkını saklı tutar. Güncel sözleşme metni sitede yayınlandığı andan itibaren tüm kullanıcılar için bağlayıcı hale gelir.
+                                    UygunSigortaci.com, işbu Kullanım Koşulları'nı ve Kullanıcı Sözleşmesi'ni dilediği zaman, önceden haber vermeksizin güncelleme veya değiştirme hakkını saklı tutar. Güncel sözleşme metni sitede yayınlandığı andan itibaren tüm kullanıcılar için bağlayıcı hale gelir.
                                 </p>
                             </section>
 

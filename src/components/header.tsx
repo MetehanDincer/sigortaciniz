@@ -66,13 +66,13 @@ export function Header() {
                         <div className="relative h-8 w-8 overflow-hidden rounded-lg">
                             <Image
                                 src="/logo.jpg"
-                                alt="Sigortacınız Logo"
+                                alt="Uygun Sigortacı Logo"
                                 fill
                                 className="object-cover"
                             />
                         </div>
                         <span className="text-lg font-bold tracking-tight text-primary leading-none">
-                            Sigortacınız<span className="text-foreground">.</span>com
+                            UygunSigortacı<span className="text-foreground">.</span>com
                         </span>
                     </Link>
                 </div>

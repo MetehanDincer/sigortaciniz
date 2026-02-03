@@ -56,7 +56,7 @@ export default function ServicesPage() {
                             Hizmetlerimiz
                         </h1>
                         <p className="text-muted-foreground text-xl max-w-3xl mx-auto">
-                            Sigortacınız olarak sizlere sunduğumuz geniş kapsamlı sigorta çözümlerini aşağıda görebilirsiniz.
+                            Uygun Sigortacı olarak sizlere sunduğumuz geniş kapsamlı sigorta çözümlerini aşağıda görebilirsiniz.
                             Size en uygun teklifi almak için ilgili hizmeti seçmeniz yeterlidir.
                         </p>
                     </div>
