@@ -53,12 +53,9 @@ export function CancellationForm({ type, title }: CancellationFormProps) {
 
             const result = await response.json()
 
-            if (!result.success) {
-                throw new Error(result.message || "Bir hata oluştu.")
-            }
-
             setSuccess(true)
         } catch (err: any) {
+            console.error("❌ İptal talebi hatası:", err);
             setError(err.message || "Bir hata oluştu. Lütfen tekrar deneyiniz.")
         } finally {
             setLoading(false)

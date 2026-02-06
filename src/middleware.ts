@@ -8,10 +8,17 @@ export async function middleware(request: NextRequest) {
         },
     })
 
-    // 1. Capture referral code from URL if present
+    // 1. Capture referral code or clear if coming from ads
     const { searchParams } = new URL(request.url)
     const ref = searchParams.get('ref')
-    if (ref) {
+    const utmSource = searchParams.get('utm_source')
+
+    // If coming from an ad (UTM source present), clear any existing affiliate cookies
+    // This ensures ad traffic is not misattributed to a partner
+    if (utmSource) {
+        response.cookies.delete('affiliate_id')
+        response.cookies.delete('affiliate_source')
+    } else if (ref) {
         // Set cookie that expires in 30 days
         response.cookies.set('affiliate_id', ref, {
             maxAge: 60 * 60 * 24 * 30,
@@ -19,9 +26,9 @@ export async function middleware(request: NextRequest) {
         })
     }
 
-    // Capture source (QR, Link, Social)
+    // Capture source (QR, Link, Social) if not already cleared by UTM
     const src = searchParams.get('src')
-    if (src) {
+    if (src && !utmSource) {
         response.cookies.set('affiliate_source', src, {
             maxAge: 60 * 60 * 24 * 30,
             path: '/',

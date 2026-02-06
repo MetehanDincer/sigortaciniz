@@ -9,7 +9,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, FileText, CheckCircle, Wallet, Copy, LogOut, Eye, X, ChevronRight, Clock, Download, ArrowLeft, TrendingUp, History, CreditCard, ShieldCheck } from "lucide-react"
+import { Users, FileText, CheckCircle, Wallet, Copy, LogOut, Eye, X, ChevronRight, Clock, Download, ArrowLeft, TrendingUp, History, CreditCard, ShieldCheck, Car, Heart, Home, Star, Rocket } from "lucide-react"
 import { QRCodeDialog } from "@/components/panel/qr-code-dialog"
 
 const shortenId = (id: string) => id ? `#T-${id.slice(0, 8).toUpperCase()}` : "";
@@ -160,7 +160,13 @@ export function DashboardPageContent() {
                 <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-bold mb-2">Hoş Geldiniz, {profile.full_name || 'Partner'}</h1>
-                        <p className="text-muted-foreground">Partner Panelinize hoş geldiniz</p>
+                        <div className="flex items-center gap-3">
+                            <p className="text-muted-foreground">Partner Panelinize hoş geldiniz</p>
+                            <div className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold border border-primary/20">
+                                <Star className="h-3.5 w-3.5" />
+                                <span>Ref: {profile.affiliate_id}</span>
+                            </div>
+                        </div>
                     </div>
                     <div className="flex gap-3">
                         <QRCodeDialog
@@ -226,6 +232,35 @@ export function DashboardPageContent() {
                             </p>
                         </CardContent>
                     </Card>
+                </div>
+
+                {/* Hızlı İşlemler Section */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                        <Rocket className="h-5 w-5 text-primary" />
+                        Hızlı Teklif Hazırla
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        {[
+                            { title: "Trafik", icon: Car, href: "/teklif/trafik", color: "bg-blue-500" },
+                            { title: "Kasko", icon: Car, href: "/teklif/kasko", color: "bg-indigo-500" },
+                            { title: "T. Sağlık", icon: Heart, href: "/teklif/tamamlayici-saglik", color: "bg-rose-500" },
+                            { title: "Ö. Sağlık", icon: Heart, href: "/teklif/ozel-saglik", color: "bg-emerald-500" },
+                            { title: "DASK", icon: Home, href: "/teklif/dask", color: "bg-amber-500" },
+                            { title: "Konut", icon: Home, href: "/teklif/konut-sigortasi", color: "bg-slate-700" },
+                        ].map((item, idx) => (
+                            <Link
+                                key={idx}
+                                href={`${item.href}?ref=${profile.affiliate_id}`}
+                                className="group bg-card border rounded-xl p-4 flex flex-col items-center justify-center text-center hover:shadow-md hover:border-primary/50 transition-all"
+                            >
+                                <div className={`p-3 rounded-lg ${item.color} text-white mb-3 group-hover:scale-110 transition-transform`}>
+                                    <item.icon className="h-6 w-6" />
+                                </div>
+                                <span className="font-bold text-sm">{item.title}</span>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
 
                 <Card>
@@ -347,6 +382,32 @@ export function DashboardPageContent() {
                                                             )}
                                                         </div>
                                                         <p className="text-sm text-muted-foreground">{step.description}</p>
+                                                        {step.dbStatus === 'Teklif Verildi' && selectedLead.offer_url && (
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="mt-4 gap-2 font-bold h-10 rounded-xl border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 shadow-sm transition-all active:scale-95"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setViewerDoc({ type: 'Offer', url: selectedLead.offer_url });
+                                                                }}
+                                                            >
+                                                                <Eye className="h-4 w-4" /> Teklifi Görüntüle
+                                                            </Button>
+                                                        )}
+                                                        {step.dbStatus === 'Satışa Döndü' && selectedLead.policy_url && (
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="mt-4 gap-2 font-bold h-10 rounded-xl border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 shadow-sm transition-all active:scale-95"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setViewerDoc({ type: 'Policy', url: selectedLead.policy_url });
+                                                                }}
+                                                            >
+                                                                <ShieldCheck className="h-4 w-4" /> Poliçeyi Görüntüle
+                                                            </Button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             )
@@ -355,51 +416,51 @@ export function DashboardPageContent() {
                                 </div>
 
                                 <div className="border-t pt-6">
-                                    <h3 className="font-semibold text-lg mb-4">Müşteri Bilgileri</h3>
+                                    <h3 className="font-semibold text-lg mb-4 text-slate-800">Müşteri Bilgileri</h3>
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <div>
-                                            <label className="text-sm text-muted-foreground">Ad Soyad</label>
-                                            <p className="font-medium">{selectedLead.full_name || selectedLead.details?.fullName || selectedLead.details?.full_name || 'İsimsiz'}</p>
+                                            <label className="text-sm text-muted-foreground uppercase font-black tracking-widest text-[10px]">Ad Soyad</label>
+                                            <p className="font-bold text-slate-900">{selectedLead.full_name || selectedLead.details?.fullName || selectedLead.details?.full_name || 'İsimsiz'}</p>
                                         </div>
                                         <div>
-                                            <label className="text-sm text-muted-foreground">Telefon</label>
-                                            <p className="font-medium">{selectedLead.phone}</p>
+                                            <label className="text-sm text-muted-foreground uppercase font-black tracking-widest text-[10px]">Telefon</label>
+                                            <p className="font-bold text-slate-900">{selectedLead.phone}</p>
                                         </div>
                                         <div>
-                                            <label className="text-sm text-muted-foreground">Sigorta Türü</label>
-                                            <p className="font-medium">{selectedLead.insurance_type}</p>
+                                            <label className="text-sm text-muted-foreground uppercase font-black tracking-widest text-[10px]">Sigorta Türü</label>
+                                            <p className="font-bold text-indigo-600">{selectedLead.insurance_type || selectedLead.type}</p>
                                         </div>
                                         <div>
-                                            <label className="text-sm text-muted-foreground">Talep Tarihi</label>
-                                            <p className="font-medium">{new Date(selectedLead.created_at).toLocaleDateString('tr-TR')}</p>
+                                            <label className="text-sm text-muted-foreground uppercase font-black tracking-widest text-[10px]">Talep Tarihi</label>
+                                            <p className="font-bold text-slate-900">{new Date(selectedLead.created_at).toLocaleDateString('tr-TR')}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {(selectedLead.offer_url || selectedLead.policy_url) && (
                                     <div className="border-t pt-6">
-                                        <h3 className="font-semibold text-lg mb-4">Belgeler</h3>
-                                        <div className="flex flex-wrap gap-3">
+                                        <h3 className="font-semibold text-lg mb-4 text-slate-800">Belgeler</h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             {selectedLead.offer_url && (
                                                 <Button
                                                     variant="outline"
-                                                    className="gap-2"
+                                                    className="w-full h-12 gap-3 font-bold border-2 hover:bg-slate-50 rounded-xl"
                                                     onClick={() => setViewerDoc({ type: 'Offer', url: selectedLead.offer_url })}
                                                 >
-                                                    <FileText className="h-4 w-4" />
-                                                    Teklif Belgesi
-                                                    <Eye className="h-4 w-4" />
+                                                    <FileText className="h-5 w-5 text-indigo-600" />
+                                                    Teklif Belgesini Gör
+                                                    <Eye className="h-4 w-4 opacity-50" />
                                                 </Button>
                                             )}
                                             {selectedLead.policy_url && (
                                                 <Button
                                                     variant="outline"
-                                                    className="gap-2"
+                                                    className="w-full h-12 gap-3 font-bold border-2 hover:bg-slate-50 rounded-xl"
                                                     onClick={() => setViewerDoc({ type: 'Policy', url: selectedLead.policy_url })}
                                                 >
-                                                    <ShieldCheck className="h-4 w-4" />
-                                                    Poliçe Belgesi
-                                                    <Eye className="h-4 w-4" />
+                                                    <ShieldCheck className="h-5 w-5 text-green-600" />
+                                                    Poliçe Belgesini Gör
+                                                    <Eye className="h-4 w-4 opacity-50" />
                                                 </Button>
                                             )}
                                         </div>
@@ -411,28 +472,38 @@ export function DashboardPageContent() {
                 )}
 
                 {viewerDoc && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80">
-                        <div className="bg-background rounded-lg shadow-xl max-w-4xl w-full h-[90vh] flex flex-col">
-                            <div className="flex items-center justify-between p-4 border-b">
-                                <h3 className="font-semibold">{viewerDoc.type === 'Offer' ? 'Teklif Belgesi' : 'Poliçe Belgesi'}</h3>
-                                <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" asChild>
-                                        <a href={viewerDoc.url} download className="gap-2">
-                                            <Download className="h-4 w-4" />
-                                            İndir
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md animate-in fade-in duration-300">
+                        <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full h-[90vh] flex flex-col overflow-hidden">
+                            <div className="flex items-center justify-between p-6 border-b bg-slate-50/50">
+                                <div>
+                                    <h3 className="text-xl font-black text-slate-900">{viewerDoc.type === 'Offer' ? 'Teklif Belgesi' : 'Poliçe Belgesi'}</h3>
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{shortenId(selectedLead.id)}</p>
+                                </div>
+                                <div className="flex gap-3">
+                                    <Button variant="outline" size="sm" asChild className="font-bold gap-2 rounded-xl">
+                                        <a href={viewerDoc.url} download target="_blank">
+                                            <Download className="h-4 w-4" /> İndir
                                         </a>
                                     </Button>
-                                    <Button variant="ghost" size="icon" onClick={() => setViewerDoc(null)}>
-                                        <X className="h-5 w-5" />
+                                    <Button variant="ghost" size="icon" onClick={() => setViewerDoc(null)} className="rounded-full hover:bg-slate-200">
+                                        <X className="h-5 w-5 text-slate-600" />
                                     </Button>
                                 </div>
                             </div>
-                            <div className="flex-1 overflow-hidden">
-                                <iframe
-                                    src={viewerDoc.url}
-                                    className="w-full h-full"
-                                    title={viewerDoc.type === 'Offer' ? 'Teklif Belgesi' : 'Poliçe Belgesi'}
-                                />
+                            <div className="flex-1 bg-slate-100 flex items-center justify-center overflow-auto p-4">
+                                {viewerDoc.url.toLowerCase().endsWith('.pdf') ? (
+                                    <iframe
+                                        src={viewerDoc.url}
+                                        className="w-full h-full border-none rounded-xl bg-white shadow-inner"
+                                        title={viewerDoc.type === 'Offer' ? 'Teklif Belgesi' : 'Poliçe Belgesi'}
+                                    />
+                                ) : (
+                                    <img
+                                        src={viewerDoc.url}
+                                        alt="Belge"
+                                        className="max-w-full max-h-full object-contain rounded-xl shadow-lg bg-white"
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>

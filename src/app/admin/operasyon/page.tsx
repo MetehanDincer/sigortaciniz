@@ -24,7 +24,9 @@ import {
     UserCircle,
     Calculator,
     Check,
-    TrendingUp
+    TrendingUp,
+    UploadCloud,
+    Download
 } from "lucide-react"
 
 import { EarningsModal } from "@/components/admin/earnings-modal"
@@ -90,6 +92,7 @@ function AdminDashboardContent() {
     const [leadLogs, setLeadLogs] = useState<any[]>([])
     const [viewerDoc, setViewerDoc] = useState<{ type: 'Offer' | 'Policy', url: string } | null>(null)
     const [isEarningsModalOpen, setIsEarningsModalOpen] = useState(false)
+    const [isUploading, setIsUploading] = useState(false)
 
     useEffect(() => {
         if (selectedLead) {
@@ -159,6 +162,73 @@ function AdminDashboardContent() {
         }
     }
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldName: 'offer_url' | 'policy_url') => {
+        const file = e.target.files?.[0]
+        if (!file || !selectedLead) return
+
+        setIsUploading(true)
+        try {
+            const fileExt = file.name.split('.').pop()
+            const safeName = file.name.split('.')[0].replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const fileName = `${selectedLead.id}-${fieldName}-${safeName}-${Math.random().toString(36).substring(7)}.${fileExt}`
+            const filePath = `${fileName}`
+
+            const { error: uploadError } = await supabase.storage
+                .from('leads')
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    contentType: file.type,
+                    upsert: false
+                })
+
+            if (uploadError) {
+                console.error("❌ Dosya yükleme (storage) hatası:", uploadError);
+                throw uploadError;
+            }
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('leads')
+                .getPublicUrl(filePath)
+
+            const { error: updateError } = await supabase
+                .from('leads')
+                .update({ [fieldName]: publicUrl })
+                .eq('id', selectedLead.id)
+
+            if (updateError) {
+                console.error("❌ Veritabanı URL güncelleme hatası:", updateError);
+                throw updateError;
+            }
+
+            // Log the action
+            await supabase.from('lead_logs').insert({
+                lead_id: selectedLead.id,
+                admin_id: adminProfile.id,
+                action: 'DOCUMENT_UPLOAD',
+                details: `${fieldName === 'offer_url' ? 'Teklif' : 'Poliçe'} belgesi yüklendi.`
+            })
+
+            const updatedLead = { ...selectedLead, [fieldName]: publicUrl }
+            setSelectedLead(updatedLead)
+            setLeads(leads.map(l => l.id === selectedLead.id ? updatedLead : l))
+
+            // Refresh logs
+            const { data: logs } = await supabase
+                .from('lead_logs')
+                .select('*, admin_profiles(admin_code)')
+                .eq('lead_id', selectedLead.id)
+                .order('created_at', { ascending: false })
+            if (logs) setLeadLogs(logs)
+
+            alert("Dosya başarıyla yüklendi.")
+        } catch (error: any) {
+            console.error("Upload error:", error)
+            alert("Dosya yüklenirken hata oluştu: " + error.message)
+        } finally {
+            setIsUploading(false)
+        }
+    }
+
     useEffect(() => {
         const getData = async () => {
             setIsLoading(true)
@@ -170,8 +240,7 @@ function AdminDashboardContent() {
             }
 
             // Fetch current admin profile
-            // We select '*' which includes all columns. 
-            // If cfu_authorized is missing from DB, it just won't be in the object, which is fine (undefined = false).
+            // Fetch current admin profile
             const { data: currentAdmin, error: adminError } = await supabase
                 .from('admin_profiles')
                 .select('*')
@@ -186,10 +255,19 @@ function AdminDashboardContent() {
 
             setAdminProfile(currentAdmin)
 
-            const { data: leadsData } = await supabase
+            // --- SIMPLIFIED FETCH FOR DEBUGGING ---
+            console.log("Admin Panel: Fetching leads for admin:", currentAdmin.admin_code)
+
+            const { data: leadsData, error: leadsError } = await supabase
                 .from('leads')
-                .select('*, assigned_admin:admin_profiles!assigned_admin_id(admin_code)')
+                .select('*') // REMOVED JOIN TEMPORARILY
                 .order('created_at', { ascending: false })
+
+            console.log("Admin Panel - Raw Leads Result:", {
+                count: leadsData?.length || 0,
+                error: leadsError,
+                firstId: leadsData?.[0]?.id
+            })
 
             const { data: adminsData } = await supabase
                 .from('admin_profiles')
@@ -197,27 +275,40 @@ function AdminDashboardContent() {
 
             if (adminsData) setAdmins(adminsData)
 
+            // Map admin codes manually for display since we removed the join
+            let leadsWithAdmins = (leadsData || []).map(l => {
+                const asAdmin = adminsData?.find(a => a.id === l.assigned_admin_id)
+                return {
+                    ...l,
+                    assigned_admin: asAdmin ? { admin_code: asAdmin.admin_code } : null
+                }
+            })
+
             // --- FETCH PARTNER NAMES ---
-            let leadsWithPartners = leadsData || []
+            let leadsWithPartners = leadsWithAdmins
             if (leadsData && leadsData.length > 0) {
                 const affiliateIds = Array.from(new Set(leadsData.filter(l => l.affiliate_id).map(l => l.affiliate_id)))
                 if (affiliateIds.length > 0) {
                     const { data: profiles } = await supabase
                         .from('profiles')
-                        .select('affiliate_id, full_name')
+                        .select('affiliate_id, full_name, email')
                         .in('affiliate_id', affiliateIds)
 
                     if (profiles) {
-                        leadsWithPartners = leadsData.map(l => {
+                        leadsWithPartners = leadsWithAdmins.map(l => {
                             const p = profiles.find(profile => profile.affiliate_id === l.affiliate_id)
-                            return { ...l, partner_name: p?.full_name }
+                            return {
+                                ...l,
+                                partner_name: p?.full_name,
+                                partner_email: p?.email
+                            }
                         })
                     }
                 }
             }
             // ---------------------------
 
-            if (leadsData) setLeads(leadsWithPartners)
+            setLeads(leadsWithPartners)
 
             setStats({
                 totalLeads: leadsData?.length || 0,
@@ -371,9 +462,9 @@ function AdminDashboardContent() {
             {isDetailsOpen && selectedLead && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsDetailsOpen(false)} />
-                    <div className="relative bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200">
-                        {/* Modal Header */}
-                        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <div className="relative bg-white w-full max-w-6xl rounded-3xl shadow-2xl overflow-y-auto border border-slate-100 flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200">
+                        {/* Scrollable Modal Content (Header + Body together) */}
+                        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600">
                                     <FileText className="h-6 w-6" />
@@ -390,16 +481,20 @@ function AdminDashboardContent() {
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Atanan Admin</span>
                                     <span className="text-sm font-black text-indigo-600">{selectedLead.assigned_admin?.admin_code}</span>
                                 </div>
-                                <button onClick={() => setIsDetailsOpen(false)} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                                <button
+                                    onClick={() => setIsDetailsOpen(false)}
+                                    className="p-2 hover:bg-slate-200 rounded-full transition-colors z-[120]"
+                                    title="Kapat"
+                                >
                                     <X className="h-5 w-5 text-slate-500" />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Modal Body */}
-                        <div className="flex flex-1 overflow-hidden">
+                        {/* Modal Body - Stacks on mobile, side-by-side on desktop */}
+                        <div className="flex flex-col lg:flex-row flex-1">
                             {/* Left: Lead Details & Process */}
-                            <div className="flex-1 overflow-y-auto p-8 space-y-8 border-r border-slate-100">
+                            <div className="flex-1 p-8 space-y-8 lg:border-r border-slate-100 bg-white">
                                 {/* Status Steps */}
                                 <div className="space-y-4">
                                     <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -434,6 +529,11 @@ function AdminDashboardContent() {
                                                 <span className="text-lg font-black text-indigo-900">
                                                     {selectedLead.partner_name || selectedLead.affiliate_id || "Bilinmiyor"}
                                                 </span>
+                                                {selectedLead.partner_email && (
+                                                    <span className="text-xs font-bold text-indigo-600 bg-indigo-100/50 px-3 py-1 rounded-lg">
+                                                        {selectedLead.partner_email}
+                                                    </span>
+                                                )}
                                                 {selectedLead.details?.referral_source && (
                                                     <span className="text-xs font-bold uppercase bg-white text-indigo-600 px-2 py-1 rounded border border-indigo-200">
                                                         {selectedLead.details.referral_source === 'qr' ? 'QR Kod' :
@@ -458,88 +558,210 @@ function AdminDashboardContent() {
                                         )
                                     })}
                                 </div>
-                            </div>
 
-                            {/* Devret (Reassign) */}
-                            <div className="p-6 rounded-3xl bg-slate-900 text-white space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <RefreshCw className="h-5 w-5 text-indigo-400" />
-                                        <div>
-                                            <h4 className="font-bold">İşlemi Devret</h4>
-                                            <p className="text-xs text-slate-400 font-medium">Bu teklifi başka bir adminin üzerine atayın.</p>
+                                {/* Documents Section (NEWly restored) */}
+                                <div className="space-y-4 pt-4 border-t border-slate-100">
+                                    <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <FileText className="h-4 w-4" /> Belgeler & Dosyalar
+                                    </h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Offer Document */}
+                                        <div className="p-4 rounded-2xl border border-slate-100 space-y-3 bg-white">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs font-black text-slate-400 uppercase">Teklif Belgesi</span>
+                                                {selectedLead.offer_url && (
+                                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Yüklendi</span>
+                                                )}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {selectedLead.offer_url ? (
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="flex-1 font-bold gap-2"
+                                                        onClick={() => setViewerDoc({ type: 'Offer', url: selectedLead.offer_url })}
+                                                    >
+                                                        <Eye className="h-4 w-4" /> Görüntüle
+                                                    </Button>
+                                                ) : (
+                                                    <div className="flex-1 relative">
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*,.pdf"
+                                                            className="hidden"
+                                                            id="offer-upload"
+                                                            onChange={(e) => handleFileUpload(e, 'offer_url')}
+                                                        />
+                                                        <Button asChild variant="outline" size="sm" className="w-full font-bold gap-2 cursor-pointer" disabled={isUploading}>
+                                                            <label htmlFor="offer-upload" className="cursor-pointer">
+                                                                {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                                                                {isUploading ? "Yükleniyor..." : "Teklif Yükle"}
+                                                            </label>
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Policy Document */}
+                                        <div className="p-4 rounded-2xl border border-slate-100 space-y-3 bg-white">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs font-black text-slate-400 uppercase">Poliçe Belgesi</span>
+                                                {selectedLead.policy_url && (
+                                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Yüklendi</span>
+                                                )}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {selectedLead.policy_url ? (
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="flex-1 font-bold gap-2"
+                                                        onClick={() => setViewerDoc({ type: 'Policy', url: selectedLead.policy_url })}
+                                                    >
+                                                        <Eye className="h-4 w-4" /> Görüntüle
+                                                    </Button>
+                                                ) : (
+                                                    <div className="flex-1 relative">
+                                                        <input
+                                                            type="file"
+                                                            accept=".pdf"
+                                                            className="hidden"
+                                                            id="policy-upload"
+                                                            onChange={(e) => handleFileUpload(e, 'policy_url')}
+                                                        />
+                                                        <Button asChild variant="outline" size="sm" className="w-full font-bold gap-2 cursor-pointer" disabled={isUploading}>
+                                                            <label htmlFor="policy-upload" className="cursor-pointer">
+                                                                {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+                                                                {isUploading ? "Yükleniyor..." : "Poliçe Yükle"}
+                                                            </label>
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap gap-2 pt-2">
-                                    {admins.filter(a => a.id !== selectedLead.assigned_admin_id).map(admin => (
-                                        <button
-                                            key={admin.id}
-                                            onClick={() => handleReassign(admin.id)}
-                                            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-black transition-colors border border-slate-700"
-                                        >
-                                            {admin.admin_code} ({admin.full_name})
-                                        </button>
+                                {/* Devret (Reassign) - Moved inside scrollable area for better flow */}
+                                <div className="p-6 rounded-3xl bg-slate-900 text-white space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <RefreshCw className="h-5 w-5 text-indigo-400" />
+                                            <div>
+                                                <h4 className="font-bold">İşlemi Devret</h4>
+                                                <p className="text-xs text-slate-400 font-medium">Bu teklifi başka bir adminin üzerine atayın.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2 pt-2">
+                                        {admins.filter(a => a.id !== selectedLead.assigned_admin_id).map(admin => (
+                                            <button
+                                                key={admin.id}
+                                                onClick={() => handleReassign(admin.id)}
+                                                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-black transition-colors border border-slate-700"
+                                            >
+                                                {admin.admin_code} ({admin.full_name})
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right: Timeline / Logs */}
+                            <div className="w-full lg:w-80 bg-slate-50 p-6 space-y-6 shrink-0 lg:border-l border-slate-100">
+                                <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Clock className="h-4 w-4" /> İşlem Geçmişi
+                                </h4>
+                                <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                                    {leadLogs.map((log) => (
+                                        <div key={log.id} className="relative pl-8">
+                                            <div className="absolute left-0 top-1 w-6 h-6 bg-white rounded-full border-2 border-primary flex items-center justify-center z-10">
+                                                <div className="w-2 h-2 bg-primary rounded-full" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[10px] font-black text-primary uppercase tracking-wider">{log.action}</span>
+                                                    <span className="text-[10px] text-slate-400 font-bold italic">{new Date(log.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                                </div>
+                                                <p className="text-xs font-extrabold text-slate-700 leading-relaxed">{log.details}</p>
+                                                <div className="text-[10px] text-slate-400 font-bold flex items-center gap-1">
+                                                    <ShieldCheck className="h-3 w-3" /> {log.admin_profiles?.admin_code || "Sistem"}
+                                                </div>
+                                            </div>
+                                        </div>
                                     ))}
+                                    {leadLogs.length === 0 && (
+                                        <p className="text-xs text-slate-400 italic text-center py-8">Henüz işlem kaydı bulunmuyor.</p>
+                                    )}
+                                    {selectedLead.status === 'Satışa Döndü' && !selectedLead.partner_commission && adminProfile?.cfu_authorized && (
+                                        <Button
+                                            onClick={() => setIsEarningsModalOpen(true)}
+                                            className="w-full bg-green-600 hover:bg-green-700 text-white"
+                                        >
+                                            <Calculator className="mr-2 h-4 w-4" />
+                                            Kazanç Hesapla & Yansıt
+                                        </Button>
+                                    )}
+
+                                    {selectedLead.status === 'Satışa Döndü' && selectedLead.partner_commission && (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2 text-green-700">
+                                            <Check className="h-5 w-5" />
+                                            <span className="font-bold">Kazanç Hesaplandı</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Right: Timeline / Logs */}
-                        <div className="w-80 bg-slate-50 overflow-y-auto p-6 space-y-6 shrink-0">
-                            <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <Clock className="h-4 w-4" /> İşlem Geçmişi
-                            </h4>
-                            <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
-                                {leadLogs.map((log) => (
-                                    <div key={log.id} className="relative pl-8">
-                                        <div className="absolute left-0 top-1 w-6 h-6 bg-white rounded-full border-2 border-primary flex items-center justify-center z-10">
-                                            <div className="w-2 h-2 bg-primary rounded-full" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-black text-primary uppercase tracking-wider">{log.action}</span>
-                                                <span className="text-[10px] text-slate-400 font-bold italic">{new Date(log.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</span>
-                                            </div>
-                                            <p className="text-xs font-extrabold text-slate-700 leading-relaxed">{log.details}</p>
-                                            <div className="text-[10px] text-slate-400 font-bold flex items-center gap-1">
-                                                <ShieldCheck className="h-3 w-3" /> {log.admin_profiles?.admin_code || "Sistem"}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                                {leadLogs.length === 0 && (
-                                    <p className="text-xs text-slate-400 italic text-center py-8">Henüz işlem kaydı bulunmuyor.</p>
-                                )}
-                                {selectedLead.status === 'Satışa Döndü' && !selectedLead.partner_commission && adminProfile?.cfu_authorized && (
-                                    <Button
-                                        onClick={() => setIsEarningsModalOpen(true)}
-                                        className="w-full bg-green-600 hover:bg-green-700 text-white"
-                                    >
-                                        <Calculator className="mr-2 h-4 w-4" />
-                                        Kazanç Hesapla & Yansıt
-                                    </Button>
-                                )}
+                        <EarningsModal
+                            isOpen={isEarningsModalOpen}
+                            onClose={() => setIsEarningsModalOpen(false)}
+                            leadId={selectedLead?.id}
+                            affiliateId={selectedLead?.affiliate_id}
+                            onSuccess={() => {
+                                window.location.reload();
+                            }}
+                        />
 
-                                {selectedLead.status === 'Satışa Döndü' && selectedLead.partner_commission && (
-                                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2 text-green-700">
-                                        <Check className="h-5 w-5" />
-                                        <span className="font-bold">Kazanç Hesaplandı</span>
+                        {/* Document Viewer Modal (RESTORED) */}
+                        {viewerDoc && (
+                            <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-300">
+                                <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full h-[90vh] flex flex-col overflow-hidden">
+                                    <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
+                                        <div>
+                                            <h3 className="text-xl font-black text-slate-900">{viewerDoc.type === 'Offer' ? 'Teklif Belgesi' : 'Poliçe Belgesi'}</h3>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">{shortenId(selectedLead.id)}</p>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <Button variant="outline" size="sm" asChild className="font-bold gap-2">
+                                                <a href={viewerDoc.url} download>
+                                                    <Download className="h-4 w-4" /> İndir
+                                                </a>
+                                            </Button>
+                                            <Button variant="ghost" size="icon" onClick={() => setViewerDoc(null)} className="rounded-full hover:bg-slate-200">
+                                                <X className="h-5 w-5" />
+                                            </Button>
+                                        </div>
                                     </div>
-                                )}
+                                    <div className="flex-1 bg-slate-100 flex items-center justify-center overflow-auto p-4">
+                                        {viewerDoc.url.toLowerCase().endsWith('.pdf') ? (
+                                            <iframe
+                                                src={viewerDoc.url}
+                                                className="w-full h-full border-none rounded-xl bg-white shadow-inner"
+                                                title={viewerDoc.type === 'Offer' ? 'Teklif Belgesi' : 'Poliçe Belgesi'}
+                                            />
+                                        ) : (
+                                            <img
+                                                src={viewerDoc.url}
+                                                alt="Belge"
+                                                className="max-w-full max-h-full object-contain rounded-xl shadow-lg bg-white"
+                                            />
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
-
-                    <EarningsModal
-                        isOpen={isEarningsModalOpen}
-                        onClose={() => setIsEarningsModalOpen(false)}
-                        leadId={selectedLead?.id}
-                        affiliateId={selectedLead?.affiliate_id}
-                        onSuccess={() => {
-                            window.location.reload();
-                        }}
-                    />
                 </div>
             )}
         </div>

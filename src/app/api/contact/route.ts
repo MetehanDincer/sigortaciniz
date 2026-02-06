@@ -16,14 +16,17 @@ export async function POST(request: Request) {
 
     const supabase = await createClient()
 
-    // Fallback: If no affiliateId yet, check if the user is logged in
-    if (!affiliateId) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase.from('profiles').select('affiliate_id').eq('id', user.id).single()
-        if (profile) affiliateId = profile.affiliate_id
-      }
-    }
+    /* 
+       DİKKAT: Giriş yapmış kullanıcının affiliate_id'sini otomatik alma (fallback) mantığı kaldırıldı.
+       Böylece partnerler kendi panelleri dışında (normal site gezginleri gibi) test yaparken 
+       talepler yanlışlıkla kendilerine atanmaz. Partnerler panelden işlem yaparken bu ID'yi 
+       zaten form içeriğiyle (body) gönderiyor.
+    */
+    // const { data: { user } } = await supabase.auth.getUser()
+    // if (user) {
+    //   const { data: profile } = await supabase.from('profiles').select('affiliate_id').eq('id', user.id).single()
+    //   if (profile) affiliateId = profile.affiliate_id
+    // }
 
     // 1. Console Log
     console.log("---------------------------------------------------")
