@@ -26,7 +26,8 @@ import {
     Check,
     TrendingUp,
     UploadCloud,
-    Download
+    Download,
+    Mail
 } from "lucide-react"
 
 import { EarningsModal } from "@/components/admin/earnings-modal"
@@ -530,9 +531,14 @@ function AdminDashboardContent() {
                                                     {selectedLead.partner_name || selectedLead.affiliate_id || "Bilinmiyor"}
                                                 </span>
                                                 {selectedLead.partner_email && (
-                                                    <span className="text-xs font-bold text-indigo-600 bg-indigo-100/50 px-3 py-1 rounded-lg">
+                                                    <a
+                                                        href={`mailto:${selectedLead.partner_email}?subject=Poliçe Bilgilendirmesi - ${shortenId(selectedLead.id)}`}
+                                                        className="text-xs font-bold text-indigo-600 bg-indigo-100/50 px-3 py-1 rounded-lg hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2"
+                                                        title="E-posta Gönder"
+                                                    >
+                                                        <Mail className="h-3 w-3" />
                                                         {selectedLead.partner_email}
-                                                    </span>
+                                                    </a>
                                                 )}
                                                 {selectedLead.details?.referral_source && (
                                                     <span className="text-xs font-bold uppercase bg-white text-indigo-600 px-2 py-1 rounded border border-indigo-200">
