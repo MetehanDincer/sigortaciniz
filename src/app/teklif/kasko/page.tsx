@@ -79,9 +79,10 @@ export default function KaskoSigortasiPage() {
             })
 
             if (!response.ok) {
-                console.error("Email gönderilemedi");
-                // Kullanıcıya hissettirmeden devam et veya uyarı ver. 
-                // Şu aşamada WhatsApp garanti olduğu için akışı bozmuyoruz ama logluyoruz.
+                const errorData = await response.json();
+                console.error("API Hatası:", errorData);
+                alert("Talebiniz kaydedilemedi: " + (errorData.message || "Bilinmeyen bir hata"));
+                return;
             }
 
             setIsSuccess(true)

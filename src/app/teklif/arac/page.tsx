@@ -85,7 +85,12 @@ export default function VehicleInsurancePage() {
                 body: JSON.stringify({ type: "Araç Sigortası", ...data }),
             })
 
-            if (!response.ok) console.error("Email hatası");
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("API Hatası:", errorData);
+                alert("Talebiniz kaydedilemedi: " + (errorData.message || "Bilinmeyen bir hata"));
+                return;
+            }
 
             setIsSuccess(true)
         } catch (error) {

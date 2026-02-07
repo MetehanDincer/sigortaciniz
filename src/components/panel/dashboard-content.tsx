@@ -121,7 +121,21 @@ export function DashboardPageContent() {
     }, [router, supabase])
 
     const handleLogout = async () => {
+        // Detailed cookie clearing for affiliate data
+        const cookiesToClear = ["affiliate_id", "affiliate_source"]
+
+        cookiesToClear.forEach(name => {
+            // Delete for current path and root path
+            document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+            document.cookie = `${name}=; path=${window.location.pathname}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+
+            // Delete for domain-wide if applicable
+            const domain = window.location.hostname;
+            document.cookie = `${name}=; path=/; domain=.${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        });
+
         await supabase.auth.signOut()
+        router.refresh()
         router.push("/")
     }
 
@@ -251,7 +265,7 @@ export function DashboardPageContent() {
                         ].map((item, idx) => (
                             <Link
                                 key={idx}
-                                href={`${item.href}?ref=${profile.affiliate_id}`}
+                                href={item.href}
                                 className="group bg-card border rounded-xl p-4 flex flex-col items-center justify-center text-center hover:shadow-md hover:border-primary/50 transition-all"
                             >
                                 <div className={`p-3 rounded-lg ${item.color} text-white mb-3 group-hover:scale-110 transition-transform`}>

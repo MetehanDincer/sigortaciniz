@@ -30,11 +30,19 @@ export function AdminChatDialog() {
             if (user) setAdminId(user.id)
 
             // Fetch sessions
-            const { data: sessionsData } = await supabase
+            const { data: sessionsData, error: sessionsError } = await supabase
                 .from('support_sessions')
-                .select('*, user:profiles!user_id(full_name, email), assigned_admin:admin_profiles!assigned_admin_id(full_name)') // Assuming 'profiles' relation
+                .select(`
+                    *,
+                    user:profiles(full_name, email),
+                    assigned_admin:admin_profiles(full_name)
+                `)
                 .neq('status', 'closed')
                 .order('last_message_at', { ascending: false })
+
+            if (sessionsError) {
+                console.error("❌ Mesajlaşma oturumları çekilirken hata oluştu:", sessionsError)
+            }
 
             if (sessionsData) setSessions(sessionsData)
         }
@@ -48,11 +56,17 @@ export function AdminChatDialog() {
                 { event: '*', schema: 'public', table: 'support_sessions' },
                 async () => {
                     // Refresh list
-                    const { data } = await supabase
+                    const { data, error } = await supabase
                         .from('support_sessions')
-                        .select('*, user:profiles!user_id(full_name, email), assigned_admin:admin_profiles!assigned_admin_id(full_name)')
+                        .select(`
+                            *,
+                            user:profiles(full_name, email),
+                            assigned_admin:admin_profiles(full_name)
+                        `)
                         .neq('status', 'closed')
                         .order('last_message_at', { ascending: false })
+
+                    if (error) console.error("❌ Gerçek zamanlı oturum güncelleme hatası:", error)
                     if (data) setSessions(data)
                 }
             )

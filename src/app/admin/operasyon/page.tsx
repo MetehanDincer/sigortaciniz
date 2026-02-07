@@ -408,6 +408,7 @@ function AdminDashboardContent() {
                                         <th className="px-6 py-4">Hizmet</th>
                                         <th className="px-6 py-4">Atanan Admin</th>
                                         <th className="px-6 py-4">Durum</th>
+                                        <th className="px-6 py-4">Kanal</th>
                                         <th className="px-6 py-4 text-right">İşlem</th>
                                     </tr>
                                 </thead>
@@ -435,6 +436,9 @@ function AdminDashboardContent() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <StatusBadge status={lead.status} />
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <ChannelBadge lead={lead} />
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <Button
@@ -793,6 +797,31 @@ function AdminStatCard({ title, value, icon, description, onClick, active }: any
                 </div>
             </CardContent>
         </Card>
+    )
+}
+
+function ChannelBadge({ lead }: { lead: any }) {
+    if (!lead.affiliate_id) {
+        return (
+            <div className="flex flex-col">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-tighter">
+                    SİTE
+                </span>
+            </div>
+        )
+    }
+
+    return (
+        <div className="flex flex-col">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-tighter w-fit">
+                PARTNER
+            </span>
+            {lead.partner_name && (
+                <span className="text-[9px] text-slate-400 font-black truncate max-w-[100px] mt-0.5 italic" title={lead.partner_name}>
+                    {lead.partner_name}
+                </span>
+            )}
+        </div>
     )
 }
 
