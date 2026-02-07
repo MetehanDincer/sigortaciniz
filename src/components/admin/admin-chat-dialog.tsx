@@ -103,7 +103,7 @@ export function AdminChatDialog() {
                     table: 'chat_messages',
                     filter: `session_id=eq.${selectedSessionId}`
                 },
-                (payload) => {
+                (payload: any) => {
                     const newMsg = payload.new as ChatMessage
                     setMessages((prev) => {
                         // Prevent duplicates (especially important with optimistic updates)

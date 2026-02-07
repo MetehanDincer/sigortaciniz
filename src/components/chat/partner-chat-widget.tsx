@@ -79,7 +79,7 @@ export function PartnerChatWidget() {
                     table: 'chat_messages',
                     filter: `session_id=eq.${sessionId}`
                 },
-                (payload) => {
+                (payload: any) => {
                     const newMsg = payload.new as ChatMessage
                     setMessages((prev) => {
                         if (prev.find(m => m.id === newMsg.id)) return prev
@@ -97,7 +97,7 @@ export function PartnerChatWidget() {
                     table: 'support_sessions',
                     filter: `id=eq.${sessionId}`
                 },
-                (payload) => {
+                (payload: any) => {
                     setSessionStatus(payload.new.status)
                     if (payload.new.status === 'closed') {
                         setSessionId(null)
