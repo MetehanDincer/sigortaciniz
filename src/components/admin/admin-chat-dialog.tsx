@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle, User, Bot, Send, Search, CheckCircle, Clock, Lock } from "lucide-react"
+import { MessageCircle, User, Bot, Send, Search, CheckCircle, Clock, Lock, HelpCircle } from "lucide-react"
 import { ChatMessage, SupportSession } from "@/types/chat"
 
 export function AdminChatDialog() {
@@ -18,6 +18,7 @@ export function AdminChatDialog() {
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [inputValue, setInputValue] = useState("")
     const [adminId, setAdminId] = useState<string | null>(null)
+    const [showCloseConfirm, setShowCloseConfirm] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const supabase = createClient()
 
@@ -104,7 +105,13 @@ export function AdminChatDialog() {
                 },
                 (payload) => {
                     const newMsg = payload.new as ChatMessage
-                    setMessages((prev) => [...prev, newMsg])
+                    setMessages((prev) => {
+                        // Prevent duplicates (especially important with optimistic updates)
+                        if (prev.find(m => m.id === newMsg.id)) return prev
+                        // Also try to replace optimistic messages if content matches (optional but safer)
+                        const filtered = prev.filter(m => !m.id.startsWith('temp-') || m.message !== newMsg.message)
+                        return [...filtered, newMsg]
+                    })
                 }
             )
             .subscribe()
@@ -123,31 +130,52 @@ export function AdminChatDialog() {
     const handleSendMessage = async () => {
         if (!inputValue.trim() || !selectedSessionId || !adminId) return
 
-        await supabase.from('chat_messages').insert({
+        const msgText = inputValue
+        const tempId = 'temp-' + Date.now()
+
+        // Optimistic Update
+        const optimisticMsg: ChatMessage = {
+            id: tempId,
             session_id: selectedSessionId,
             sender_type: 'admin',
-            message: inputValue,
-            is_read: false
-        })
-
-        // Update session to 'active' if it was 'waiting_admin'
-        await supabase.from('support_sessions')
-            .update({
-                status: 'active',
-                last_message_at: new Date().toISOString(),
-                assigned_admin_id: adminId
-            })
-            .eq('id', selectedSessionId)
-
+            message: msgText,
+            is_read: false,
+            created_at: new Date().toISOString()
+        }
+        setMessages(prev => [...prev, optimisticMsg])
         setInputValue("")
+
+        try {
+            const { error } = await supabase.from('chat_messages').insert({
+                session_id: selectedSessionId,
+                sender_type: 'admin',
+                message: msgText,
+                is_read: false
+            })
+
+            if (error) throw error
+
+            // Update session status
+            await supabase.from('support_sessions')
+                .update({
+                    status: 'active',
+                    last_message_at: new Date().toISOString(),
+                    assigned_admin_id: adminId
+                })
+                .eq('id', selectedSessionId)
+
+        } catch (error) {
+            console.error("❌ Mesaj gönderilemedi:", error)
+            setMessages(prev => prev.filter(m => m.id !== tempId))
+        }
     }
 
     const handleCloseSession = async (sessionId: string) => {
-        if (confirm("Bu görüşmeyi sonlandırmak istediğinize emin misiniz?")) {
-            await supabase.from('support_sessions').update({ status: 'closed' }).eq('id', sessionId)
-            setSelectedSessionId(null)
-            setSessions(prev => prev.filter(s => s.id !== sessionId))
-        }
+        await supabase.from('support_sessions').update({
+            status: 'closing_requested',
+            last_message_at: new Date().toISOString()
+        }).eq('id', sessionId)
+        setShowCloseConfirm(false)
     }
 
     // Helper to format time
@@ -218,6 +246,9 @@ export function AdminChatDialog() {
                                                 {session.status === 'bot' && (
                                                     <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase">Bot</span>
                                                 )}
+                                                {session.status === 'closing_requested' && (
+                                                    <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-600 text-[10px] font-black uppercase">Sonlandırma Onayı Bekleniyor</span>
+                                                )}
                                                 {session.status === 'active' && (
                                                     <span className="px-1.5 py-0.5 rounded bg-green-100 text-green-600 text-[10px] font-bold uppercase flex items-center gap-1">
                                                         {session.assigned_admin_id && session.assigned_admin_id !== adminId && (
@@ -247,8 +278,8 @@ export function AdminChatDialog() {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                        onClick={() => handleCloseSession(selectedSessionId)}
+                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 mr-12 font-bold"
+                                        onClick={() => setShowCloseConfirm(true)}
                                     >
                                         Görüşmeyi Sonlandır
                                     </Button>
@@ -256,7 +287,18 @@ export function AdminChatDialog() {
 
                                 {/* Messages */}
                                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                                    {messages.map((msg) => {
+                                    {/* System Notification for New Requests */}
+                                    <div className="flex justify-center mb-6">
+                                        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold px-4 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+                                            <span className="flex h-2 w-2 relative">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                                            </span>
+                                            CANLI DESTEK TALEBİ BAŞLATILDI
+                                        </div>
+                                    </div>
+
+                                    {messages.filter(m => m.sender_type !== 'bot').map((msg) => {
                                         const isAdmin = msg.sender_type === 'admin'
                                         const isBot = msg.sender_type === 'bot'
                                         return (
@@ -283,6 +325,36 @@ export function AdminChatDialog() {
                                     })}
                                     <div ref={messagesEndRef} />
                                 </div>
+
+                                {/* Custom Close Confirmation Overlay */}
+                                {showCloseConfirm && (
+                                    <div className="absolute inset-0 z-40 bg-slate-900/10 backdrop-blur-[2px] flex items-center justify-center p-6 animate-in fade-in duration-200">
+                                        <div className="bg-white rounded-3xl p-8 shadow-2xl border border-slate-100 max-w-sm w-full text-center">
+                                            <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                                                <HelpCircle className="h-8 w-8 text-red-500" />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-slate-900 mb-2">Görüşme Sonlandırılsın mı?</h3>
+                                            <p className="text-sm text-slate-500 mb-8 leading-relaxed">
+                                                İş ortağına görüşmeyi sonlandırma talebi gönderilecektir. Emin misiniz?
+                                            </p>
+                                            <div className="flex flex-col gap-3">
+                                                <Button
+                                                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold h-11 rounded-xl shadow-lg shadow-red-100"
+                                                    onClick={() => handleCloseSession(selectedSessionId)}
+                                                >
+                                                    Evet, Talebi Gönder
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="w-full text-slate-400 font-bold h-11 rounded-xl"
+                                                    onClick={() => setShowCloseConfirm(false)}
+                                                >
+                                                    İptal
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Input */}
                                 <div className="p-4 bg-white border-t border-slate-200">

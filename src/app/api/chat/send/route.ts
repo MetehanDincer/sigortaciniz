@@ -15,12 +15,15 @@ export async function POST(request: Request) {
 
     if (!currentSessionId) {
         // Check if there is an open session for this user
-        const { data: existingSession } = await supabase
+        const { data: sessionData } = await supabase
             .from('support_sessions')
             .select('*')
             .eq('user_id', userId)
             .neq('status', 'closed')
-            .single()
+            .order('last_message_at', { ascending: false })
+            .limit(1)
+
+        const existingSession = sessionData?.[0]
 
         if (existingSession) {
             currentSessionId = existingSession.id
@@ -40,11 +43,13 @@ export async function POST(request: Request) {
         }
     } else {
         // Verify session exists and get status
-        const { data: session } = await supabase
+        const { data: sessionData } = await supabase
             .from('support_sessions')
             .select('status')
             .eq('id', currentSessionId)
-            .single()
+            .limit(1)
+
+        const session = sessionData?.[0]
 
         if (session) {
             sessionStatus = session.status
@@ -82,18 +87,28 @@ export async function POST(request: Request) {
 
         let match = null
         if (faqs) {
-            // Simple keyword matching
+            // Turkish aware keywords check
             match = faqs.find(faq =>
-                faq.keywords && faq.keywords.some((k: string) => lowerMsg.includes(k.toLowerCase()))
+                faq.keywords && faq.keywords.some((k: string) =>
+                    lowerMsg.includes(k.toLowerCase()) ||
+                    message.toLocaleLowerCase('tr-TR').includes(k.toLocaleLowerCase('tr-TR'))
+                )
             )
         }
 
         if (match) {
             botReply = match.answer
         } else {
-            // Fallback for "temsilci" request
-            if (lowerMsg.includes('temsilci') || lowerMsg.includes('canlı destek') || lowerMsg.includes('insan')) {
-                botReply = "Sizi hemen bir temsilcimize yönlendiriyorum. Lütfen bekleyin..."
+            // Fix: Improved recognition for Live Support requests
+            const isSupportRequest =
+                lowerMsg.includes('temsilci') ||
+                lowerMsg.includes('canlı destek') ||
+                lowerMsg.includes('canli destek') ||
+                lowerMsg.includes('insan') ||
+                message.toLocaleLowerCase('tr-TR').includes('canlı destek');
+
+            if (isSupportRequest) {
+                botReply = null // No bot message, just escalate
                 // Auto-escalate
                 await supabase.from('support_sessions').update({ status: 'waiting_admin' }).eq('id', currentSessionId)
             } else {

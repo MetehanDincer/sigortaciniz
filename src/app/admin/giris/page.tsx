@@ -21,23 +21,28 @@ export default function AdminLoginPage() {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (user) {
-                const { data: adminData } = await supabase
-                    .from('admin_profiles')
-                    .select('admin_code')
-                    .eq('id', user.id)
-                    .single()
+            try {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (user) {
+                    const { data: adminData } = await supabase
+                        .from('admin_profiles')
+                        .select('admin_code')
+                        .eq('id', user.id)
+                        .single()
 
-                if (adminData) {
-                    router.push("/admin")
-                    return
+                    if (adminData) {
+                        router.push("/admin")
+                        return
+                    }
                 }
+            } catch (err) {
+                console.error("Auth check error:", err)
+            } finally {
+                setIsCheckingAuth(false)
             }
-            setIsCheckingAuth(false)
         }
         checkAuth()
-    }, [router, supabase])
+    }, [router])
 
     if (isCheckingAuth) {
         return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">Yükleniyor...</div>

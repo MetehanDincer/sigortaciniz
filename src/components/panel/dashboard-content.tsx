@@ -79,46 +79,50 @@ export function DashboardPageContent() {
 
     useEffect(() => {
         const getData = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) {
-                router.push("/giris")
-                return
-            }
+            try {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) {
+                    router.push("/giris")
+                    return
+                }
 
-            const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-            setProfile(profileData)
+                const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+                setProfile(profileData)
 
-            if (profileData) {
-                const { data: leadsData } = await supabase
-                    .from('leads')
-                    .select('*')
-                    .eq('affiliate_id', profileData.affiliate_id)
-                    .order('created_at', { ascending: false })
+                if (profileData) {
+                    const { data: leadsData } = await supabase
+                        .from('leads')
+                        .select('*')
+                        .eq('affiliate_id', profileData.affiliate_id)
+                        .order('created_at', { ascending: false })
 
-                setLeads(leadsData || [])
+                    setLeads(leadsData || [])
 
-                const soldCount = leadsData?.filter((l: any) => l.status === 'Satışa Döndü' || l.status === 'Kazanç Yansıtıldı').length || 0
-                const pendingPaymentCount = leadsData?.filter((l: any) => l.status === 'Ödeme Alınıyor').length || 0
+                    const soldCount = leadsData?.filter((l: any) => l.status === 'Satışa Döndü' || l.status === 'Kazanç Yansıtıldı').length || 0
+                    const pendingPaymentCount = leadsData?.filter((l: any) => l.status === 'Ödeme Alınıyor').length || 0
 
-                const { data: earningsData } = await supabase
-                    .from('earnings')
-                    .select('amount')
-                    .eq('affiliate_id', profileData.affiliate_id)
-                    .eq('status', 'completed')
+                    const { data: earningsData } = await supabase
+                        .from('earnings')
+                        .select('amount')
+                        .eq('affiliate_id', profileData.affiliate_id)
+                        .eq('status', 'completed')
 
-                const totalEarned = earningsData?.reduce((sum: number, e: any) => sum + (e.amount || 0), 0) || 0
+                    const totalEarned = earningsData?.reduce((sum: number, e: any) => sum + (e.amount || 0), 0) || 0
 
-                setStats({
-                    totalLeads: leadsData?.length || 0,
-                    soldLeads: soldCount,
-                    pendingPayment: pendingPaymentCount,
-                    totalEarned
-                })
+                    setStats({
+                        totalLeads: leadsData?.length || 0,
+                        soldLeads: soldCount,
+                        pendingPayment: pendingPaymentCount,
+                        totalEarned
+                    })
+                }
+            } catch (error) {
+                console.error("❌ Veri çekme hatası:", error)
             }
         }
 
         getData()
-    }, [router, supabase])
+    }, [router])
 
     const handleLogout = async () => {
         // Detailed cookie clearing for affiliate data

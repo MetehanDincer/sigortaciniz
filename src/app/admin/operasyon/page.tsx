@@ -37,7 +37,7 @@ const shortenId = (id: string) => id ? `#T-${id.slice(0, 8).toUpperCase()}` : ""
 
 export default function AdminDashboardPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold">Admin Paneli Yükleniyor...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold">Temsilci Paneli Yükleniyor...</div>}>
             <AdminDashboardContent />
         </Suspense>
     )
@@ -232,95 +232,100 @@ function AdminDashboardContent() {
 
     useEffect(() => {
         const getData = async () => {
-            setIsLoading(true)
-            const { data: { user } } = await supabase.auth.getUser()
+            try {
+                setIsLoading(true)
+                const { data: { user } } = await supabase.auth.getUser()
 
-            if (!user) {
-                router.push("/admin/giris")
-                return
-            }
-
-            // Fetch current admin profile
-            // Fetch current admin profile
-            const { data: currentAdmin, error: adminError } = await supabase
-                .from('admin_profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single()
-
-            if (adminError || !currentAdmin) {
-                console.error("Admin Login Error:", adminError)
-                router.push('/admin/giris')
-                return
-            }
-
-            setAdminProfile(currentAdmin)
-
-            // --- SIMPLIFIED FETCH FOR DEBUGGING ---
-            console.log("Admin Panel: Fetching leads for admin:", currentAdmin.admin_code)
-
-            const { data: leadsData, error: leadsError } = await supabase
-                .from('leads')
-                .select('*') // REMOVED JOIN TEMPORARILY
-                .order('created_at', { ascending: false })
-
-            console.log("Admin Panel - Raw Leads Result:", {
-                count: leadsData?.length || 0,
-                error: leadsError,
-                firstId: leadsData?.[0]?.id
-            })
-
-            const { data: adminsData } = await supabase
-                .from('admin_profiles')
-                .select('*')
-
-            if (adminsData) setAdmins(adminsData)
-
-            // Map admin codes manually for display since we removed the join
-            let leadsWithAdmins = (leadsData || []).map(l => {
-                const asAdmin = adminsData?.find(a => a.id === l.assigned_admin_id)
-                return {
-                    ...l,
-                    assigned_admin: asAdmin ? { admin_code: asAdmin.admin_code } : null
+                if (!user) {
+                    router.push("/admin/giris")
+                    return
                 }
-            })
 
-            // --- FETCH PARTNER NAMES ---
-            let leadsWithPartners = leadsWithAdmins
-            if (leadsData && leadsData.length > 0) {
-                const affiliateIds = Array.from(new Set(leadsData.filter(l => l.affiliate_id).map(l => l.affiliate_id)))
-                if (affiliateIds.length > 0) {
-                    const { data: profiles } = await supabase
-                        .from('profiles')
-                        .select('affiliate_id, full_name, email')
-                        .in('affiliate_id', affiliateIds)
+                // Fetch current admin profile
+                // Fetch current admin profile
+                const { data: currentAdmin, error: adminError } = await supabase
+                    .from('admin_profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single()
 
-                    if (profiles) {
-                        leadsWithPartners = leadsWithAdmins.map(l => {
-                            const p = profiles.find(profile => profile.affiliate_id === l.affiliate_id)
-                            return {
-                                ...l,
-                                partner_name: p?.full_name,
-                                partner_email: p?.email
-                            }
-                        })
+                if (adminError || !currentAdmin) {
+                    console.error("Admin Login Error:", adminError)
+                    router.push('/admin/giris')
+                    return
+                }
+
+                setAdminProfile(currentAdmin)
+
+                // --- SIMPLIFIED FETCH FOR DEBUGGING ---
+                console.log("Admin Panel: Fetching leads for admin:", currentAdmin.admin_code)
+
+                const { data: leadsData, error: leadsError } = await supabase
+                    .from('leads')
+                    .select('*') // REMOVED JOIN TEMPORARILY
+                    .order('created_at', { ascending: false })
+
+                console.log("Admin Panel - Raw Leads Result:", {
+                    count: leadsData?.length || 0,
+                    error: leadsError,
+                    firstId: leadsData?.[0]?.id
+                })
+
+                const { data: adminsData } = await supabase
+                    .from('admin_profiles')
+                    .select('*')
+
+                if (adminsData) setAdmins(adminsData)
+
+                // Map admin codes manually for display since we removed the join
+                let leadsWithAdmins = (leadsData || []).map((l: any) => {
+                    const asAdmin = adminsData?.find((a: any) => a.id === l.assigned_admin_id)
+                    return {
+                        ...l,
+                        assigned_admin: asAdmin ? { admin_code: asAdmin.admin_code } : null
+                    }
+                })
+
+                // --- FETCH PARTNER NAMES ---
+                let leadsWithPartners = leadsWithAdmins
+                if (leadsData && leadsData.length > 0) {
+                    const affiliateIds = Array.from(new Set(leadsData.filter((l: any) => l.affiliate_id).map((l: any) => l.affiliate_id)))
+                    if (affiliateIds.length > 0) {
+                        const { data: profiles } = await supabase
+                            .from('profiles')
+                            .select('affiliate_id, full_name, email')
+                            .in('affiliate_id', affiliateIds)
+
+                        if (profiles) {
+                            leadsWithPartners = leadsWithAdmins.map((l: any) => {
+                                const p = profiles.find((profile: any) => profile.affiliate_id === l.affiliate_id)
+                                return {
+                                    ...l,
+                                    partner_name: p?.full_name,
+                                    partner_email: p?.email
+                                }
+                            })
+                        }
                     }
                 }
+                // ---------------------------
+
+                setLeads(leadsWithPartners)
+
+                setStats({
+                    totalLeads: leadsData?.length || 0,
+                    activeAdmins: adminsData?.filter((a: any) => a.is_active).length || 0,
+                    myLeads: leadsData?.filter((l: any) => l.assigned_admin_id === user.id).length || 0,
+                    completedSales: leadsData?.filter((l: any) => l.status === 'Satışa Döndü' || l.status === 'Kazanç Yansıtıldı').length || 0
+                })
+            } catch (error) {
+                console.error("❌ Veri çekme hatası:", error)
+            } finally {
+                setIsLoading(false)
             }
-            // ---------------------------
-
-            setLeads(leadsWithPartners)
-
-            setStats({
-                totalLeads: leadsData?.length || 0,
-                activeAdmins: adminsData?.filter(a => a.is_active).length || 0,
-                myLeads: leadsData?.filter(l => l.assigned_admin_id === user.id).length || 0,
-                completedSales: leadsData?.filter(l => l.status === 'Satışa Döndü' || l.status === 'Kazanç Yansıtıldı').length || 0
-            })
-            setIsLoading(false)
         }
         getData()
-    }, [router, supabase])
+    }, [router])
 
     const handleLogout = async () => {
         await supabase.auth.signOut()
@@ -345,7 +350,7 @@ function AdminDashboardContent() {
                             <span className="bg-slate-900 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
                                 {adminProfile?.admin_code}
                             </span>
-                            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Admin Paneli</h1>
+                            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Temsilci Paneli</h1>
                         </div>
                         <p className="text-slate-500 font-medium">Hoş geldin, {adminProfile?.full_name}. Tüm operasyonları buradan yönetebilirsin.</p>
                     </div>
@@ -574,7 +579,7 @@ function AdminDashboardContent() {
                                     <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                         <FileText className="h-4 w-4" /> Belgeler & Dosyalar
                                     </h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4">
                                         {/* Offer Document */}
                                         <div className="p-4 rounded-2xl border border-slate-100 space-y-3 bg-white">
                                             <div className="flex items-center justify-between">
@@ -606,44 +611,6 @@ function AdminDashboardContent() {
                                                             <label htmlFor="offer-upload" className="cursor-pointer">
                                                                 {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
                                                                 {isUploading ? "Yükleniyor..." : "Teklif Yükle"}
-                                                            </label>
-                                                        </Button>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* Policy Document */}
-                                        <div className="p-4 rounded-2xl border border-slate-100 space-y-3 bg-white">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-xs font-black text-slate-400 uppercase">Poliçe Belgesi</span>
-                                                {selectedLead.policy_url && (
-                                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Yüklendi</span>
-                                                )}
-                                            </div>
-                                            <div className="flex gap-2">
-                                                {selectedLead.policy_url ? (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="flex-1 font-bold gap-2"
-                                                        onClick={() => setViewerDoc({ type: 'Policy', url: selectedLead.policy_url })}
-                                                    >
-                                                        <Eye className="h-4 w-4" /> Görüntüle
-                                                    </Button>
-                                                ) : (
-                                                    <div className="flex-1 relative">
-                                                        <input
-                                                            type="file"
-                                                            accept=".pdf"
-                                                            className="hidden"
-                                                            id="policy-upload"
-                                                            onChange={(e) => handleFileUpload(e, 'policy_url')}
-                                                        />
-                                                        <Button asChild variant="outline" size="sm" className="w-full font-bold gap-2 cursor-pointer" disabled={isUploading}>
-                                                            <label htmlFor="policy-upload" className="cursor-pointer">
-                                                                {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
-                                                                {isUploading ? "Yükleniyor..." : "Poliçe Yükle"}
                                                             </label>
                                                         </Button>
                                                     </div>
@@ -739,7 +706,7 @@ function AdminDashboardContent() {
                                 <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full h-[90vh] flex flex-col overflow-hidden">
                                     <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
                                         <div>
-                                            <h3 className="text-xl font-black text-slate-900">{viewerDoc.type === 'Offer' ? 'Teklif Belgesi' : 'Poliçe Belgesi'}</h3>
+                                            <h3 className="text-xl font-black text-slate-900">Teklif Belgesi</h3>
                                             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">{shortenId(selectedLead.id)}</p>
                                         </div>
                                         <div className="flex gap-3">

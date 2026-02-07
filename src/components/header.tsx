@@ -17,8 +17,6 @@ export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [isAdmin, setIsAdmin] = useState(false)
-    const [kurumsalOpen, setKurumsalOpen] = useState(false)
-    const [iptalOpen, setIptalOpen] = useState(false)
     const supabase = createClient()
 
     useEffect(() => {
@@ -39,7 +37,7 @@ export function Header() {
         }
         checkUser()
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: any, session: any) => {
             const currentUser = session?.user ?? null
             setUser(currentUser)
 
@@ -56,7 +54,7 @@ export function Header() {
         })
 
         return () => subscription.unsubscribe()
-    }, [supabase])
+    }, [])
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -81,14 +79,10 @@ export function Header() {
                     <Link href="/hizmetlerimiz" className="hover:text-primary transition-colors">Hizmetlerimiz</Link>
 
                     {/* Kurumsal Dropdown */}
-                    <div
-                        onMouseEnter={() => setKurumsalOpen(true)}
-                        onMouseLeave={() => setKurumsalOpen(false)}
-                        className="relative"
-                    >
-                        <DropdownMenu open={kurumsalOpen} onOpenChange={setKurumsalOpen}>
+                    <div className="relative">
+                        <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="flex items-center gap-1 hover:text-primary transition-colors outline-none font-bold text-primary py-4">
+                                <button className="flex items-center gap-1 hover:text-primary transition-colors outline-none font-bold text-primary py-4 cursor-pointer">
                                     Kurumsal <ChevronDown className="h-4 w-4" />
                                 </button>
                             </DropdownMenuTrigger>
@@ -108,14 +102,10 @@ export function Header() {
                     </div>
 
                     {/* İptal İşlemleri Dropdown */}
-                    <div
-                        onMouseEnter={() => setIptalOpen(true)}
-                        onMouseLeave={() => setIptalOpen(false)}
-                        className="relative"
-                    >
-                        <DropdownMenu open={iptalOpen} onOpenChange={setIptalOpen}>
+                    <div className="relative">
+                        <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="flex items-center gap-1 hover:text-primary transition-colors outline-none py-4">
+                                <button className="flex items-center gap-1 hover:text-primary transition-colors outline-none py-4 cursor-pointer">
                                     İptal İşlemleri <ChevronDown className="h-4 w-4" />
                                 </button>
                             </DropdownMenuTrigger>
@@ -147,7 +137,7 @@ export function Header() {
                     <div className="flex items-center gap-2">
                         {isAdmin && (
                             <Button asChild variant="ghost" className="hidden lg:flex h-9 px-3 text-sm font-bold text-primary hover:text-primary/80 hover:bg-primary/5">
-                                <Link href="/admin/operasyon">Yönetici Paneli</Link>
+                                <Link href="/admin/operasyon">Temsilci Paneli</Link>
                             </Button>
                         )}
                         <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
@@ -241,7 +231,7 @@ export function Header() {
                         <div className="flex flex-col gap-2 w-full">
                             {isAdmin && (
                                 <Button asChild variant="ghost" className="w-full justify-start font-bold text-primary py-2 px-4 h-auto">
-                                    <Link href="/admin/operasyon" onClick={() => setMobileMenuOpen(false)}>Yönetici Paneli</Link>
+                                    <Link href="/admin/operasyon" onClick={() => setMobileMenuOpen(false)}>Temsilci Paneli</Link>
                                 </Button>
                             )}
                             <Button asChild variant="outline" className="w-full">

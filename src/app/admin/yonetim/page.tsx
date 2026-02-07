@@ -47,143 +47,135 @@ function ManagementDashboardContent() {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) {
-                router.push("/admin/giris")
-                return
-            }
+            try {
+                setLoading(true)
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) {
+                    router.push("/admin/giris")
+                    return
+                }
 
-            // Verify CFU authorization
-            const { data: profile } = await supabase
-                .from('admin_profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single()
+                // Verify CFU authorization
+                const { data: profile } = await supabase
+                    .from('admin_profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single()
 
-            if (!profile?.cfu_authorized) {
-                // Not authorized for management, redirect to operations
-                router.push("/admin/operasyon")
-                return
-            }
+                if (!profile?.cfu_authorized) {
+                    // Not authorized for management, redirect to operations
+                    router.push("/admin/operasyon")
+                    return
+                }
 
-            setAdminProfile(profile)
+                setAdminProfile(profile)
 
-            // --- FETCH DASHBOARD DATA ---
+                // --- FETCH DASHBOARD DATA ---
+                // ... rest of data fetching ...
+                const { data: earningsData } = await supabase
+                    .from('earnings')
+                    .select('total_premium, company_share')
+                    .eq('status', 'active')
 
-            // 1. Financial Stats
-            const { data: earningsData } = await supabase
-                .from('earnings')
-                .select('total_premium, company_share')
-                .eq('status', 'active')
+                const totalTurnover = earningsData?.reduce((sum: number, item: any) => sum + Number(item.total_premium), 0) || 0
+                const totalProfit = earningsData?.reduce((sum: number, item: any) => sum + Number(item.company_share), 0) || 0
 
-            const totalTurnover = earningsData?.reduce((sum, item) => sum + Number(item.total_premium), 0) || 0
-            const totalProfit = earningsData?.reduce((sum, item) => sum + Number(item.company_share), 0) || 0
+                const { data: profilesData } = await supabase
+                    .from('profiles')
+                    .select('wallet_balance')
 
-            // 2. Pending Payouts (Wallet Balances)
-            const { data: profilesData } = await supabase
-                .from('profiles')
-                .select('wallet_balance')
+                const pendingPayouts = profilesData?.reduce((sum: number, item: any) => sum + (Number(item.wallet_balance) || 0), 0) || 0
 
-            const pendingPayouts = profilesData?.reduce((sum, item) => sum + (Number(item.wallet_balance) || 0), 0) || 0
+                const { count: activeLeadsCount } = await supabase
+                    .from('leads')
+                    .select('*', { count: 'exact', head: true })
+                    .in('status', ['Bekliyor', 'İnceleniyor', 'Teklif Verildi', 'Ödeme Alınıyor'])
 
-            // 3. Active Operations (All leads except completed/rejected)
-            const { count: activeLeadsCount } = await supabase
-                .from('leads')
-                .select('*', { count: 'exact', head: true })
-                .in('status', ['Bekliyor', 'İnceleniyor', 'Teklif Verildi', 'Ödeme Alınıyor'])
-
-            setStats({
-                totalTurnover,
-                totalProfit,
-                activeLeads: activeLeadsCount || 0,
-                pendingPayouts
-            })
-
-            // 4. Active Reps With Workload
-            const { data: adminsData } = await supabase
-                .from('admin_profiles')
-                .select('*')
-                .order('is_active', { ascending: false })
-
-            if (adminsData) {
-                // We need to fetch stats for each admin manually since we don't have aggregation views
-                const repsWithStats = await Promise.all(adminsData.map(async (admin) => {
-                    // Workload
-                    const { count: workload } = await supabase
-                        .from('leads')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('assigned_admin_id', admin.id)
-                        .in('status', ['Bekliyor', 'İnceleniyor', 'Teklif Verildi', 'Ödeme Alınıyor'])
-
-                    // Sales (Today)
-                    // Simplified for now to total "Satışa Döndü"
-                    const { count: sales } = await supabase
-                        .from('leads')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('assigned_admin_id', admin.id)
-                        .eq('status', 'Satışa Döndü')
-
-                    return {
-                        ...admin,
-                        workload: workload || 0,
-                        sales_count: sales || 0
-                    }
-                }))
-                setReps(repsWithStats)
-            }
-
-            // 5. Pending Finance Actions (Sales without earnings)
-            // Strategy: Get all 'Satışa Döndü' leads, and check if they have an earning entry
-            const { data: salesData } = await supabase
-                .from('leads')
-                .select('*, assigned_admin:admin_profiles!assigned_admin_id(admin_code)')
-                .eq('status', 'Satışa Döndü')
-                .is('partner_commission', null) // We can check if commission is set in leads table if we added it, OR check earnings table.
-            // Since our previous implementation set 'partner_commission' in leads table when calculating earnings,
-            // checking .is('partner_commission', null) is the fastest way to find uncalculated earnings!
-
-            if (salesData) {
-                setPendingSales(salesData)
-            }
-
-            // 6. Partner Performance Stats
-            const { data: allPartners } = await supabase
-                .from('profiles')
-                .select('affiliate_id, full_name, email')
-                .not('affiliate_id', 'is', null)
-
-            const { data: affiliateLeads } = await supabase
-                .from('leads')
-                .select('*')
-                .not('affiliate_id', 'is', null)
-
-            if (allPartners && affiliateLeads) {
-                const pStats = allPartners.map(p => {
-                    const pLeads = affiliateLeads.filter(l => l.affiliate_id === p.affiliate_id)
-                    const sales = pLeads.filter(l => l.status === 'Satışa Döndü').length
-                    const qrCount = pLeads.filter(l => l.details?.referral_source === 'qr').length
-                    const linkCount = pLeads.filter(l => l.details?.referral_source === 'link').length
-
-                    return {
-                        id: p.affiliate_id,
-                        name: p.full_name || p.email,
-                        code: p.affiliate_id,
-                        total_leads: pLeads.length,
-                        sales: sales,
-                        qr_usage: qrCount,
-                        link_usage: linkCount
-                    }
+                setStats({
+                    totalTurnover,
+                    totalProfit,
+                    activeLeads: activeLeadsCount || 0,
+                    pendingPayouts
                 })
-                    .filter(p => p.total_leads > 0) // Only show active partners
-                    .sort((a, b) => b.total_leads - a.total_leads)
 
-                setPartners(pStats)
+                const { data: adminsData } = await supabase
+                    .from('admin_profiles')
+                    .select('*')
+                    .order('is_active', { ascending: false })
+
+                if (adminsData) {
+                    const repsWithStats = await Promise.all(adminsData.map(async (admin: any) => {
+                        const { count: workload } = await supabase
+                            .from('leads')
+                            .select('*', { count: 'exact', head: true })
+                            .eq('assigned_admin_id', admin.id)
+                            .in('status', ['Bekliyor', 'İnceleniyor', 'Teklif Verildi', 'Ödeme Alınıyor'])
+
+                        const { count: sales } = await supabase
+                            .from('leads')
+                            .select('*', { count: 'exact', head: true })
+                            .eq('assigned_admin_id', admin.id)
+                            .eq('status', 'Satışa Döndü')
+
+                        return {
+                            ...admin,
+                            workload: workload || 0,
+                            sales_count: sales || 0
+                        }
+                    }))
+                    setReps(repsWithStats)
+                }
+
+                const { data: salesData } = await supabase
+                    .from('leads')
+                    .select('*, assigned_admin:admin_profiles!assigned_admin_id(admin_code)')
+                    .eq('status', 'Satışa Döndü')
+                    .is('partner_commission', null)
+
+                if (salesData) {
+                    setPendingSales(salesData)
+                }
+
+                const { data: allPartners } = await supabase
+                    .from('profiles')
+                    .select('affiliate_id, full_name, email')
+                    .not('affiliate_id', 'is', null)
+
+                const { data: affiliateLeads } = await supabase
+                    .from('leads')
+                    .select('*')
+                    .not('affiliate_id', 'is', null)
+
+                if (allPartners && affiliateLeads) {
+                    const pStats = allPartners.map((p: any) => {
+                        const pLeads = affiliateLeads.filter((l: any) => l.affiliate_id === p.affiliate_id)
+                        const sales = pLeads.filter((l: any) => l.status === 'Satışa Döndü').length
+                        const qrCount = pLeads.filter((l: any) => l.details?.referral_source === 'qr').length
+                        const linkCount = pLeads.filter((l: any) => l.details?.referral_source === 'link').length
+
+                        return {
+                            id: p.affiliate_id,
+                            name: p.full_name || p.email,
+                            code: p.affiliate_id,
+                            total_leads: pLeads.length,
+                            sales: sales,
+                            qr_usage: qrCount,
+                            link_usage: linkCount
+                        }
+                    })
+                        .filter((p: any) => p.total_leads > 0)
+                        .sort((a: any, b: any) => b.total_leads - a.total_leads)
+
+                    setPartners(pStats)
+                }
+            } catch (error) {
+                console.error("❌ Yönetim paneli veri hatası:", error)
+            } finally {
+                setLoading(false)
             }
-
-            setLoading(false)
         }
         checkAuth()
-    }, [router, supabase])
+    }, [router])
 
     const handleLogout = async () => {
         await supabase.auth.signOut()

@@ -1,5 +1,5 @@
 export type SenderType = 'user' | 'bot' | 'admin';
-export type SessionStatus = 'bot' | 'waiting_admin' | 'active' | 'closed';
+export type SessionStatus = 'bot' | 'waiting_admin' | 'active' | 'closing_requested' | 'closed';
 
 export interface FAQItem {
     id: string;

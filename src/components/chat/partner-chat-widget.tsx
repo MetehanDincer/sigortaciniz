@@ -16,6 +16,7 @@ export function PartnerChatWidget() {
     const [inputValue, setInputValue] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [sessionId, setSessionId] = useState<string | null>(null)
+    const [sessionStatus, setSessionStatus] = useState<string | null>(null)
     const [faqs, setFaqs] = useState<FAQItem[]>([])
     const [userId, setUserId] = useState<string | null>(null)
     const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -37,15 +38,19 @@ export function PartnerChatWidget() {
                 if (faqData) setFaqs(faqData)
 
                 // Check active session
-                const { data: session } = await supabase
+                const { data: sessionData } = await supabase
                     .from('support_sessions')
                     .select('id, status')
                     .eq('user_id', user.id)
                     .neq('status', 'closed')
-                    .single()
+                    .order('last_message_at', { ascending: false })
+                    .limit(1)
+
+                const session = sessionData?.[0]
 
                 if (session) {
                     setSessionId(session.id)
+                    setSessionStatus(session.status)
                     // Load messages
                     const { data: msgs } = await supabase
                         .from('chat_messages')
@@ -60,7 +65,7 @@ export function PartnerChatWidget() {
         init()
     }, [supabase])
 
-    // 2. Realtime Subscription
+    // 2. Realtime Subscription (Messages & Session Status)
     useEffect(() => {
         if (!sessionId) return
 
@@ -78,8 +83,26 @@ export function PartnerChatWidget() {
                     const newMsg = payload.new as ChatMessage
                     setMessages((prev) => {
                         if (prev.find(m => m.id === newMsg.id)) return prev
-                        return [...prev, newMsg]
+                        // Duplicate check for optimistic updates
+                        const filtered = prev.filter(m => !m.id.startsWith('temp-') || m.message !== newMsg.message)
+                        return [...filtered, newMsg]
                     })
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'support_sessions',
+                    filter: `id=eq.${sessionId}`
+                },
+                (payload) => {
+                    setSessionStatus(payload.new.status)
+                    if (payload.new.status === 'closed') {
+                        setSessionId(null)
+                        setMessages([])
+                    }
                 }
             )
             .subscribe()
@@ -99,9 +122,19 @@ export function PartnerChatWidget() {
         if (!msgText.trim() || !userId) return
 
         // Optimistic UI for User Message
-        const tempId = Math.random().toString()
+        const tempId = 'temp-' + Date.now()
+        const optimisticMsg: ChatMessage = {
+            id: tempId,
+            session_id: sessionId || 'new',
+            sender_type: 'user',
+            message: msgText,
+            is_read: false,
+            created_at: new Date().toISOString()
+        }
+
+        setMessages(prev => [...prev, optimisticMsg])
+
         if (!text) {
-            // Only if typed manually, clear input immediately
             setInputValue("")
         }
 
@@ -119,13 +152,41 @@ export function PartnerChatWidget() {
             })
 
             const data = await response.json()
-            if (data.sessionId && !sessionId) {
-                setSessionId(data.sessionId)
+
+            if (data.sessionId) {
+                const isNewSession = !sessionId;
+                if (isNewSession) {
+                    setSessionId(data.sessionId)
+                    // If it's a new session, Realtime might have missed the first messages
+                    // because the subscription started after the inserts.
+                    // Fetch them manually once.
+                    const { data: freshMsgs } = await supabase
+                        .from('chat_messages')
+                        .select('*')
+                        .eq('session_id', data.sessionId)
+                        .order('created_at', { ascending: true })
+
+                    if (freshMsgs) {
+                        setMessages(freshMsgs as any)
+                    }
+                }
             }
         } catch (error) {
             console.error("Chat error", error)
+            // Remove optimistic message on error
+            setMessages(prev => prev.filter(m => m.id !== tempId))
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleUpdateSessionStatus = async (newStatus: string) => {
+        if (!sessionId) return
+        await supabase.from('support_sessions').update({ status: newStatus }).eq('id', sessionId)
+        setSessionStatus(newStatus)
+        if (newStatus === 'closed') {
+            setSessionId(null)
+            setMessages([])
         }
     }
 
@@ -159,6 +220,7 @@ export function PartnerChatWidget() {
 
                     {/* Messages Area */}
                     <CardContent className="flex-grow overflow-y-auto p-4 space-y-4 bg-slate-50">
+
                         {/* Initial Greeting */}
                         <div className="flex gap-3">
                             <div className="bg-indigo-100 p-2 rounded-full h-8 w-8 flex items-center justify-center shrink-0">
@@ -226,6 +288,39 @@ export function PartnerChatWidget() {
                         )}
                         <div ref={messagesEndRef} />
                     </CardContent>
+
+                    {/* Closing Confirmation Overlay (Fixed at Bottom Above Footer) */}
+                    {sessionStatus === 'closing_requested' && (
+                        <div className="absolute inset-x-0 bottom-[60px] z-30 p-3 animate-in slide-in-from-bottom-5 duration-300">
+                            <div className="bg-white border-2 border-indigo-50 shadow-[0_-8px_30px_rgb(0,0,0,0.15)] rounded-2xl p-4 text-center">
+                                <div className="flex items-center justify-center gap-2 mb-2">
+                                    <HelpCircle className="h-4 w-4 text-indigo-600" />
+                                    <h4 className="font-bold text-sm text-slate-900">Görüşme Sonlandırılsın mı?</h4>
+                                </div>
+                                <p className="text-[11px] text-slate-600 leading-tight mb-4 px-2">
+                                    Size yardımcı olacağım başka bir konu kalmadı ise görüşmemiz 1 dakika içerisinde sonlandırılacaktır.
+                                </p>
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={() => handleUpdateSessionStatus('closed')}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="flex-1 font-bold text-slate-400 hover:text-red-600"
+                                    >
+                                        Sonlandır
+                                    </Button>
+                                    <Button
+                                        onClick={() => handleUpdateSessionStatus('active')}
+                                        variant="default"
+                                        size="sm"
+                                        className="flex-1 font-bold bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100"
+                                    >
+                                        Devam Et
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Footer Input */}
                     <CardFooter className="p-3 bg-white border-t border-slate-100">

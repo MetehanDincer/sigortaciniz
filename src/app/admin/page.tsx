@@ -32,7 +32,7 @@ export default function AdminRootPage() {
         }
 
         checkAuth()
-    }, [router, supabase])
+    }, [router])
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 font-medium text-slate-500">
