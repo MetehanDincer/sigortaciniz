@@ -9,8 +9,9 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, FileText, CheckCircle, Wallet, Copy, LogOut, Eye, X, ChevronRight, Clock, Download, ArrowLeft, TrendingUp, History, CreditCard, ShieldCheck, Car, Heart, Home, Star, Rocket } from "lucide-react"
+import { Users, FileText, CheckCircle, Wallet, Copy, LogOut, Eye, X, ChevronRight, Clock, Download, ArrowLeft, TrendingUp, History, CreditCard, ShieldCheck, Car, Heart, Home, Star, Rocket, Lock } from "lucide-react"
 import { QRCodeDialog } from "@/components/panel/qr-code-dialog"
+import { TrainingDialog } from "@/components/panel/training-dialog"
 
 const shortenId = (id: string) => id ? `#T-${id.slice(0, 8).toUpperCase()}` : "";
 
@@ -69,6 +70,9 @@ export function DashboardPageContent() {
     const [selectedLead, setSelectedLead] = useState<any>(null)
     const [isDetailsOpen, setIsDetailsOpen] = useState(false)
     const [viewerDoc, setViewerDoc] = useState<{ type: 'Offer' | 'Policy', url: string } | null>(null)
+    const [completedTrainings, setCompletedTrainings] = useState<string[]>([])
+    const [isTrainingOpen, setIsTrainingOpen] = useState(false)
+    const [selectedTraining, setSelectedTraining] = useState<{ type: string, title: string } | null>(null)
 
     useEffect(() => {
         const filter = searchParams.get('filter')
@@ -115,6 +119,16 @@ export function DashboardPageContent() {
                         pendingPayment: pendingPaymentCount,
                         totalEarned
                     })
+
+                    // Fetch completed trainings
+                    const { data: trainingData } = await supabase
+                        .from('partner_trainings')
+                        .select('training_type')
+                        .eq('user_id', user.id)
+
+                    if (trainingData) {
+                        setCompletedTrainings(trainingData.map((t: any) => t.training_type))
+                    }
                 }
             } catch (error) {
                 console.error("❌ Veri çekme hatası:", error)
@@ -260,26 +274,61 @@ export function DashboardPageContent() {
                     </h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                         {[
-                            { title: "Trafik", icon: Car, href: "/teklif/trafik", color: "bg-blue-500" },
-                            { title: "Kasko", icon: Car, href: "/teklif/kasko", color: "bg-indigo-500" },
-                            { title: "T. Sağlık", icon: Heart, href: "/teklif/tamamlayici-saglik", color: "bg-rose-500" },
-                            { title: "Ö. Sağlık", icon: Heart, href: "/teklif/ozel-saglik", color: "bg-emerald-500" },
-                            { title: "DASK", icon: Home, href: "/teklif/dask", color: "bg-amber-500" },
-                            { title: "Konut", icon: Home, href: "/teklif/konut-sigortasi", color: "bg-slate-700" },
-                        ].map((item, idx) => (
-                            <Link
-                                key={idx}
-                                href={item.href}
-                                className="group bg-card border rounded-xl p-4 flex flex-col items-center justify-center text-center hover:shadow-md hover:border-primary/50 transition-all"
-                            >
-                                <div className={`p-3 rounded-lg ${item.color} text-white mb-3 group-hover:scale-110 transition-transform`}>
-                                    <item.icon className="h-6 w-6" />
+                            { title: "Trafik", id: "trafik", icon: Car, href: "/teklif/trafik", color: "bg-blue-500" },
+                            { title: "Kasko", id: "kasko", icon: Car, href: "/teklif/kasko", color: "bg-indigo-500" },
+                            { title: "T. Sağlık", id: "tamamlayici-saglik", icon: Heart, href: "/teklif/tamamlayici-saglik", color: "bg-rose-500" },
+                            { title: "Ö. Sağlık", id: "ozel-saglik", icon: Heart, href: "/teklif/ozel-saglik", color: "bg-emerald-500" },
+                            { title: "DASK", id: "dask", icon: Home, href: "/teklif/dask", color: "bg-amber-500" },
+                            { title: "Konut", id: "konut", icon: Home, href: "/teklif/konut-sigortasi", color: "bg-slate-700" },
+                        ].map((item, idx) => {
+                            const isCompleted = completedTrainings.includes(item.id)
+
+                            return (
+                                <div
+                                    key={idx}
+                                    onClick={(e) => {
+                                        if (!isCompleted) {
+                                            e.preventDefault()
+                                            setSelectedTraining({ type: item.id, title: item.title })
+                                            setIsTrainingOpen(true)
+                                        } else {
+                                            router.push(item.href)
+                                        }
+                                    }}
+                                    className={`group relative bg-card border rounded-xl p-4 flex flex-col items-center justify-center text-center transition-all cursor-pointer ${isCompleted
+                                        ? "hover:shadow-md hover:border-primary/50"
+                                        : "opacity-70 grayscale-[0.5] bg-slate-50 border-dashed"
+                                        }`}
+                                >
+                                    {!isCompleted && (
+                                        <div className="absolute top-2 right-2 p-1 bg-amber-100 rounded text-amber-600">
+                                            <Lock className="h-3 w-3" />
+                                        </div>
+                                    )}
+                                    <div className={`p-3 rounded-lg ${isCompleted ? item.color : 'bg-slate-400'} text-white mb-3 group-hover:scale-110 transition-transform`}>
+                                        <item.icon className="h-6 w-6" />
+                                    </div>
+                                    <span className={`font-bold text-sm ${!isCompleted ? 'text-slate-500' : ''}`}>{item.title}</span>
+                                    {!isCompleted && (
+                                        <span className="text-[10px] text-amber-600 font-bold mt-1 uppercase tracking-tighter">Eğitim Gerekli</span>
+                                    )}
                                 </div>
-                                <span className="font-bold text-sm">{item.title}</span>
-                            </Link>
-                        ))}
+                            )
+                        })}
                     </div>
                 </div>
+
+                {selectedTraining && (
+                    <TrainingDialog
+                        isOpen={isTrainingOpen}
+                        onClose={() => setIsTrainingOpen(false)}
+                        trainingType={selectedTraining.type}
+                        trainingTitle={selectedTraining.title}
+                        onComplete={() => {
+                            setCompletedTrainings(prev => [...prev, selectedTraining.type])
+                        }}
+                    />
+                )}
 
                 <Card>
                     <CardHeader>

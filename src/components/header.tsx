@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X, Phone, ChevronDown, Rocket, Building2, FileX, ShieldX } from "lucide-react"
+import { Menu, X, Phone, ChevronDown, Rocket, Building2, FileX, ShieldX, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import Image from "next/image"
@@ -95,6 +95,11 @@ export function Header() {
                                 <DropdownMenuItem asChild className="rounded-lg p-3 cursor-pointer">
                                     <Link href="/blog" className="flex items-center gap-2 font-semibold">
                                         <Rocket className="h-4 w-4 text-primary" /> Blog
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild className="rounded-lg p-3 cursor-pointer">
+                                    <Link href="/kurumsal/egitim" className="flex items-center gap-2 font-semibold">
+                                        <BookOpen className="h-4 w-4 text-primary" /> Eğitim
                                     </Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -194,6 +199,13 @@ export function Header() {
                                 onClick={() => setMobileMenuOpen(false)}
                             >
                                 Blog
+                            </Link>
+                            <Link
+                                href="/kurumsal/egitim"
+                                className="text-muted-foreground hover:text-primary font-medium py-1 pl-4 border-l border-slate-200"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Eğitim
                             </Link>
                         </div>
 
