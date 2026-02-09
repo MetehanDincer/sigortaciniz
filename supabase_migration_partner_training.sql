@@ -30,3 +30,9 @@ create policy "Admins can view all training records"
     on partner_trainings for select 
     to authenticated 
     using (exists (select 1 from admin_profiles where id = auth.uid()));
+
+create policy "Users can update their own training records" 
+    on partner_trainings for update 
+    to authenticated 
+    using (auth.uid() = user_id)
+    with check (auth.uid() = user_id);

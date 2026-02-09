@@ -40,9 +40,10 @@ export function TrainingDialog({ isOpen, onClose, trainingType, trainingTitle, o
             toast.success(`${trainingTitle} eğitimi tamamlandı! Satış yetkiniz açıldı.`)
             onComplete()
             onClose()
-        } catch (error: any) {
-            console.error("Hata:", error)
-            toast.error("Eğitim kaydedilirken bir hata oluştu.")
+        } catch (err: any) {
+            console.error("❌ Eğitim Aktivasyon Hatası:", err)
+            const errorMessage = err.message || "Eğitim kaydedilirken bir hata oluştu."
+            toast.error(errorMessage)
         } finally {
             setLoading(false)
         }
