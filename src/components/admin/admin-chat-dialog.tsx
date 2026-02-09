@@ -155,7 +155,7 @@ export function AdminChatDialog() {
 
             if (error) throw error
 
-            // Update session status
+            // Update session status and timestamp (Crucial for Realtime fallback)
             await supabase.from('support_sessions')
                 .update({
                     status: 'active',

@@ -69,6 +69,8 @@ export function PartnerChatWidget() {
     useEffect(() => {
         if (!sessionId) return
 
+        console.log("🔌 Realtime başlatılıyor: ", sessionId)
+
         const channel = supabase
             .channel(`session-${sessionId}`)
             .on(
@@ -80,6 +82,7 @@ export function PartnerChatWidget() {
                     filter: `session_id=eq.${sessionId}`
                 },
                 (payload: any) => {
+                    console.log("📩 Yeni mesaj geldi (Realtime):", payload.new)
                     const newMsg = payload.new as ChatMessage
                     setMessages((prev) => {
                         if (prev.find(m => m.id === newMsg.id)) return prev
@@ -97,17 +100,37 @@ export function PartnerChatWidget() {
                     table: 'support_sessions',
                     filter: `id=eq.${sessionId}`
                 },
-                (payload: any) => {
+                async (payload: any) => {
+                    console.log("🔄 Oturum güncellendi (Realtime):", payload.new.status)
                     setSessionStatus(payload.new.status)
+
+                    // FALLBACK SYNC: If session is updated (usually by admin sending a message), 
+                    // fetch messages manually in case the 'INSERT' event was missed.
+                    if (payload.new.status !== 'closed') {
+                        const { data: freshMsgs } = await supabase
+                            .from('chat_messages')
+                            .select('*')
+                            .eq('session_id', sessionId)
+                            .order('created_at', { ascending: true })
+
+                        if (freshMsgs) {
+                            console.log("✅ Mesajlar manuel senkronize edildi.")
+                            setMessages(freshMsgs as any)
+                        }
+                    }
+
                     if (payload.new.status === 'closed') {
                         setSessionId(null)
                         setMessages([])
                     }
                 }
             )
-            .subscribe()
+            .subscribe((status: string) => {
+                console.log("📡 Realtime durum:", status)
+            })
 
         return () => {
+            console.log("🔌 Realtime durduruluyor: ", sessionId)
             supabase.removeChannel(channel)
         }
     }, [sessionId, supabase])
