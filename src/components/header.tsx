@@ -13,7 +13,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function Header() {
+export function Header({ agency }: { agency?: any }) {
+    const defaultName = "Uygun Sigortacı"
+    const defaultPhone = "0 537 947 34 64"
+
+    const name = agency?.name || defaultName
+    const phone = agency?.whatsapp_number || defaultPhone
+
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [isAdmin, setIsAdmin] = useState(false)
@@ -25,11 +31,17 @@ export function Header() {
             setUser(currentUser)
 
             if (currentUser) {
-                const { data: adminData } = await supabase
+                console.log("Header: Giriş yapan kullanıcı ID:", currentUser.id);
+                const { data: adminData, error } = await supabase
                     .from('admin_profiles')
-                    .select('admin_code')
+                    .select('admin_code, role')
                     .eq('id', currentUser.id)
                     .single()
+
+                if (error) {
+                    console.error("Header: Admin kontrol hatası:", error);
+                }
+                console.log("Header: Admin datası:", adminData);
                 setIsAdmin(!!adminData)
             } else {
                 setIsAdmin(false)
@@ -63,14 +75,14 @@ export function Header() {
                     <Link href="/" className="flex items-center gap-1.5 transition-opacity hover:opacity-80">
                         <div className="relative h-8 w-8 overflow-hidden rounded-lg">
                             <Image
-                                src="/logo.jpg"
-                                alt="Uygun Sigortacı Logo"
+                                src={agency?.logo_url || "/logo.jpg"}
+                                alt={`${name} Logo`}
                                 fill
                                 className="object-cover"
                             />
                         </div>
                         <span className="text-lg font-bold tracking-tight text-primary leading-none">
-                            UygunSigortacı<span className="text-foreground">.</span>com
+                            {name}<span className="text-foreground">.</span>com
                         </span>
                     </Link>
                 </div>
@@ -132,16 +144,16 @@ export function Header() {
                     <Link href="/iletisim" className="hover:text-primary transition-colors">İletişim</Link>
                 </nav>
                 <div className="flex items-center gap-3">
-                    <a href="tel:05379473464" className="hidden lg:flex items-center gap-1.5 text-foreground hover:text-primary transition-colors">
+                    <a href={`tel:${phone.replace(/\s+/g, '')}`} className="hidden lg:flex items-center gap-1.5 text-foreground hover:text-primary transition-colors">
                         <Phone className="h-4 w-4" />
-                        <span className="font-semibold text-sm">0 537 947 34 64</span>
+                        <span className="font-semibold text-sm">{phone}</span>
                     </a>
                     <Button asChild className="hidden sm:flex h-9 px-4 text-sm font-semibold">
                         <Link href="/hizmetlerimiz">Teklif Al</Link>
                     </Button>
                     <div className="flex items-center gap-2">
                         {isAdmin && (
-                            <Button asChild variant="ghost" className="hidden lg:flex h-9 px-3 text-sm font-bold text-primary hover:text-primary/80 hover:bg-primary/5">
+                            <Button asChild variant="ghost" className="hidden sm:flex h-9 px-3 text-sm font-bold text-primary hover:text-primary/80 hover:bg-primary/5">
                                 <Link href="/admin/operasyon">Temsilci Paneli</Link>
                             </Button>
                         )}

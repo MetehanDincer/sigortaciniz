@@ -1,19 +1,18 @@
-"use client"
-
 import Link from "next/link"
 import Image from "next/image"
 import { ShieldCheck, Car, Heart, Home, ArrowRight, BadgeCheck, Clock, Users, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { getAgencyConfig } from "@/lib/agency"
 
-export default function LandingPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+export default async function LandingPage() {
+  const agency = await getAgencyConfig()
+  const name = agency?.name || "Uygun Sigortacı"
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <Header agency={agency} />
 
       <main className="flex-1">
         {/* Hero Section */}
@@ -21,21 +20,21 @@ export default function LandingPage() {
         <section className="relative overflow-hidden py-20 lg:py-24 bg-gradient-to-b from-primary/5 via-background to-background">
           {/* Decorative Scattered Logos Background */}
           <div className="absolute inset-0 pointer-events-none select-none overflow-hidden opacity-10">
-            {[...Array(50)].map((_, i) => (
+            {[...Array(20)].map((_, i) => (
               <div
                 key={i}
                 className="absolute grayscale rounded-full overflow-hidden"
                 style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${30 + Math.random() * 70}px`,
-                  height: `${30 + Math.random() * 70}px`,
-                  transform: `rotate(${Math.random() * 360}deg) translate(-50%, -50%)`,
-                  opacity: 0.3 + Math.random() * 0.6,
+                  top: `${(i * 13) % 100}%`,
+                  left: `${(i * 17) % 100}%`,
+                  width: `${50 + (i % 5) * 10}px`,
+                  height: `${50 + (i % 5) * 10}px`,
+                  transform: `rotate(${(i * 45) % 360}deg) translate(-50%, -50%)`,
+                  opacity: 0.1,
                 }}
               >
                 <Image
-                  src="/logo.jpg"
+                  src={agency?.logo_url || "/logo.jpg"}
                   alt="logo background"
                   fill
                   className="object-cover"
@@ -52,7 +51,7 @@ export default function LandingPage() {
                   🚀 Hızlı ve Güvenilir Sigorta
                 </div>
                 <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl max-w-4xl text-foreground">
-                  Geleceğinizi <span className="text-primary">Güvence</span> Altına Alın
+                  {agency?.name ? <>{agency.name} ile Geleceğinizi <span className="text-primary">Güvence</span> Altına Alın</> : <>Geleceğinizi <span className="text-primary">Güvence</span> Altına Alın</>}
                 </h1>
                 <p className="max-w-[700px] text-muted-foreground md:text-xl">
                   Aracınız, sağlığınız ve eviniz için en uygun sigorta tekliflerini saniyeler içinde alın.
@@ -88,14 +87,14 @@ export default function LandingPage() {
                       <div className="flex items-center gap-2">
                         <div className="relative h-8 w-8 overflow-hidden rounded-md">
                           <Image
-                            src="/logo.jpg"
+                            src={agency?.logo_url || "/logo.jpg"}
                             alt="Logo"
                             fill
                             className="object-cover"
                           />
                         </div>
                         <span className="font-bold text-primary text-sm">
-                          UygunSigortacı<span className="text-foreground">.</span>com
+                          {name}<span className="text-foreground">.</span>com
                         </span>
                       </div>
                       <Menu className="h-4 w-4 text-gray-400" />
@@ -333,7 +332,7 @@ export default function LandingPage() {
 
               <div className="bg-primary/5 p-8 rounded-xl border border-primary/20">
                 <p className="text-lg text-foreground leading-relaxed">
-                  <span className="font-bold text-primary">Uygun Sigortacı</span> olarak,
+                  <span className="font-bold text-primary">{name}</span> olarak,
                   müşterilerimizin memnuniyetini her şeyin üstünde tutuyoruz.
                   Değişen ihtiyaçlarınıza göre ürün ve hizmetlerimizi sürekli geliştiriyor,
                   teknolojik altyapımızı güçlendirerek size daha hızlı ve kolay hizmet sunmanın
@@ -428,7 +427,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer agency={agency} />
     </div>
   )
 }

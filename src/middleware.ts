@@ -2,11 +2,16 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+    const host = request.headers.get('host') || ''
+
     let response = NextResponse.next({
         request: {
-            headers: request.headers,
+            headers: new Headers(request.headers),
         },
     })
+
+    // Add agency host to request headers so it can be read in Server Components
+    response.headers.set('x-agency-host', host)
 
     // 1. Capture referral code or clear if coming from ads
     const { searchParams } = new URL(request.url)

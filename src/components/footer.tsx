@@ -3,7 +3,14 @@ import Link from "next/link"
 import Image from "next/image"
 import { Phone, Mail, MapPin } from "lucide-react"
 
-export function Footer() {
+export function Footer({ agency }: { agency?: any }) {
+    const defaultName = "Uygun Sigortacı"
+    const defaultPhone = "0 537 947 34 64"
+    const defaultEmail = "info@uygunsigortaci.com"
+
+    const name = agency?.name || defaultName
+    const phone = agency?.whatsapp_number || defaultPhone
+    const email = agency?.support_email || defaultEmail
     return (
         <footer className="border-t bg-background pt-16 pb-8">
             <div className="container px-4 max-w-screen-2xl mx-auto">
@@ -13,27 +20,27 @@ export function Footer() {
                         <div className="flex items-center gap-2">
                             <div className="relative h-10 w-10 overflow-hidden rounded-md">
                                 <Image
-                                    src="/logo.jpg"
-                                    alt="Uygun Sigortacı Logo"
+                                    src={agency?.logo_url || "/logo.jpg"}
+                                    alt={`${name} Logo`}
                                     fill
                                     className="object-cover"
                                 />
                             </div>
                             <span className="text-xl font-bold text-foreground">
-                                UygunSigortacı<span className="text-foreground">.</span>com
+                                {name}<span className="text-foreground">.</span>com
                             </span>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
                             Sigorta sektöründeki deneyimimiz ve müşteri odaklı yaklaşımımızla, geleceğinizi güven altına alıyoruz.
                         </p>
                         <div className="space-y-3">
-                            <a href="tel:05379473464" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                            <a href={`tel:${phone.replace(/\s+/g, '')}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                                 <Phone className="h-4 w-4 text-primary" />
-                                <span>0 537 947 34 64</span>
+                                <span>{phone}</span>
                             </a>
-                            <a href="mailto:info@uygunsigortaci.com" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
+                            <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors">
                                 <Mail className="h-4 w-4 text-primary" />
-                                <span>info@uygunsigortaci.com</span>
+                                <span>{email}</span>
                             </a>
                         </div>
                     </div>
@@ -74,7 +81,7 @@ export function Footer() {
 
                 <div className="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-muted-foreground text-center md:text-left">
-                        © 2024 Uygun Sigortacı. Tüm hakları saklıdır.
+                        © {new Date().getFullYear()} {name}. Tüm hakları saklıdır.
                     </p>
                     <div className="flex gap-4">
                         <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">

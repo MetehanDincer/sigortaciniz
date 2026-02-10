@@ -4,6 +4,13 @@ import { ArrowRight, Calendar, User, Clock, ChevronRight } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Sigorta Rehberi & Bilgi Merkezi",
+    description: "Trafik sigortası, kasko, sağlık ve konut sigortası hakkında güncel bilgiler, rehberler ve uzman görüşleri.",
+    keywords: ["sigorta blog", "hasar süreci", "kasko bilgi", "sigorta rehberi"],
+}
 
 // Dummy data for blog posts
 const blogPosts = [
