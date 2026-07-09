@@ -211,7 +211,7 @@ export function QRCodeDialog({ value, title = "Referans QR Kodu", partnerName = 
                             level={"H"}
                             includeMargin={true}
                             imageSettings={{
-                                src: "/logo.jpg",
+                                src: "/logo.png",
                                 x: undefined,
                                 y: undefined,
                                 height: 40,

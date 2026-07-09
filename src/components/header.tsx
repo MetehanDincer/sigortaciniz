@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
+import { SEDDK_HIDDEN } from "@/lib/features"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -75,7 +76,7 @@ export function Header({ agency }: { agency?: any }) {
                     <Link href="/" className="flex items-center gap-1.5 transition-opacity hover:opacity-80">
                         <div className="relative h-8 w-8 overflow-hidden rounded-lg">
                             <Image
-                                src={agency?.logo_url || "/logo.jpg"}
+                                src={agency?.logo_url || "/logo.png"}
                                 alt={`${name} Logo`}
                                 fill
                                 className="object-cover"
@@ -157,13 +158,15 @@ export function Header({ agency }: { agency?: any }) {
                                 <Link href="/admin/operasyon">Temsilci Paneli</Link>
                             </Button>
                         )}
-                        {/* <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
-                            {user ? (
-                                <Link href="/panel">Panelim</Link>
-                            ) : (
-                                <Link href="/giris">Giriş Yap</Link>
-                            )}
-                        </Button> */}
+                        {!SEDDK_HIDDEN && (
+                            <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
+                                {user ? (
+                                    <Link href="/panel">Panelim</Link>
+                                ) : (
+                                    <Link href="/giris">Giriş Yap</Link>
+                                )}
+                            </Button>
+                        )}
                     </div>
                     <Button
                         variant="ghost"
@@ -258,13 +261,15 @@ export function Header({ agency }: { agency?: any }) {
                                     <Link href="/admin/operasyon" onClick={() => setMobileMenuOpen(false)}>Temsilci Paneli</Link>
                                 </Button>
                             )}
-                            {/* <Button asChild variant="outline" className="w-full">
-                                {user ? (
-                                    <Link href="/panel" onClick={() => setMobileMenuOpen(false)}>Panelim</Link>
-                                ) : (
-                                    <Link href="/giris" onClick={() => setMobileMenuOpen(false)}>Giriş Yap</Link>
-                                )}
-                            </Button> */}
+                            {!SEDDK_HIDDEN && (
+                                <Button asChild variant="outline" className="w-full">
+                                    {user ? (
+                                        <Link href="/panel" onClick={() => setMobileMenuOpen(false)}>Panelim</Link>
+                                    ) : (
+                                        <Link href="/giris" onClick={() => setMobileMenuOpen(false)}>Giriş Yap</Link>
+                                    )}
+                                </Button>
+                            )}
                         </div>
                     </nav>
                 </div>

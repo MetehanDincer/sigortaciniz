@@ -130,7 +130,7 @@ export default function BlogPage() {
                                 }}
                             >
                                 <Image
-                                    src="/logo.jpg"
+                                    src="/logo.png"
                                     alt="logo background"
                                     fill
                                     className="object-cover"

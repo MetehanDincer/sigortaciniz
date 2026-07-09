@@ -199,7 +199,7 @@ export function ContactContent({ agency }: { agency?: any }) {
                             <div className="mt-12 pt-8 border-t flex flex-col items-center justify-center opacity-30 group hover:opacity-100 transition-opacity duration-500">
                                 <div className="relative h-80 w-80 grayscale group-hover:grayscale-0 transition-all duration-500">
                                     <Image
-                                        src={agency?.logo_url || "/logo.jpg"}
+                                        src={agency?.logo_url || "/logo.png"}
                                         alt={`${name} Logo`}
                                         fill
                                         className="object-contain"

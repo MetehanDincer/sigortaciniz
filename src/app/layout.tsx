@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: description,
       images: [
         {
-          url: agency?.logo_url || "/logo.jpg",
+          url: agency?.logo_url || "/logo.png",
           width: 1200,
           height: 630,
           alt: name,
@@ -58,7 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: `${name} | Sigorta Teklifleri`,
       description: description,
-      images: [agency?.logo_url || "/logo.jpg"],
+      images: [agency?.logo_url || "/logo.png"],
     },
     robots: {
       index: true,
@@ -93,7 +93,7 @@ export default async function RootLayout({
               "@type": "Organization",
               "name": name,
               "url": `https://${agency?.domain || "uygunsigortaci.com"}`,
-              "logo": agency?.logo_url || "https://uygunsigortaci.com/logo.jpg",
+              "logo": agency?.logo_url || "https://uygunsigortaci.com/logo.png",
               "contactPoint": {
                 "@type": "ContactPoint",
                 "telephone": agency?.whatsapp_number,

@@ -34,7 +34,7 @@ export default async function LandingPage() {
                 }}
               >
                 <Image
-                  src={agency?.logo_url || "/logo.jpg"}
+                  src={agency?.logo_url || "/logo.png"}
                   alt="logo background"
                   fill
                   className="object-cover"
@@ -87,7 +87,7 @@ export default async function LandingPage() {
                       <div className="flex items-center gap-2">
                         <div className="relative h-8 w-8 overflow-hidden rounded-md">
                           <Image
-                            src={agency?.logo_url || "/logo.jpg"}
+                            src={agency?.logo_url || "/logo.png"}
                             alt="Logo"
                             fill
                             className="object-cover"
