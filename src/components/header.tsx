@@ -157,13 +157,13 @@ export function Header({ agency }: { agency?: any }) {
                                 <Link href="/admin/operasyon">Temsilci Paneli</Link>
                             </Button>
                         )}
-                        <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
+                        {/* <Button asChild variant="outline" className="hidden sm:flex h-9 px-4 text-sm font-semibold">
                             {user ? (
                                 <Link href="/panel">Panelim</Link>
                             ) : (
                                 <Link href="/giris">Giriş Yap</Link>
                             )}
-                        </Button>
+                        </Button> */}
                     </div>
                     <Button
                         variant="ghost"
@@ -258,13 +258,13 @@ export function Header({ agency }: { agency?: any }) {
                                     <Link href="/admin/operasyon" onClick={() => setMobileMenuOpen(false)}>Temsilci Paneli</Link>
                                 </Button>
                             )}
-                            <Button asChild variant="outline" className="w-full">
+                            {/* <Button asChild variant="outline" className="w-full">
                                 {user ? (
                                     <Link href="/panel" onClick={() => setMobileMenuOpen(false)}>Panelim</Link>
                                 ) : (
                                     <Link href="/giris" onClick={() => setMobileMenuOpen(false)}>Giriş Yap</Link>
                                 )}
-                            </Button>
+                            </Button> */}
                         </div>
                     </nav>
                 </div>

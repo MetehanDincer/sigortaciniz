@@ -7,6 +7,126 @@ import { Button } from "@/components/ui/button"
 
 // This would normally come from a database or CMS based on the slug
 const blogPosts = {
+    "kronik-hastaligi-olanlar-tss-yaptirabilir-mi": {
+        title: "Kronik Hastalığı Olanlar Tamamlayıcı Sağlık Sigortası Yaptırabilir mi?",
+        category: "Sağlık",
+        date: "04 Temmuz 2026",
+        readTime: "6 dk okuma",
+        author: "Sağlık Danışmanı",
+        image: "/blog/health-2.png",
+        content: `
+      <p class="mb-4 text-lg">Özel hastane konforundan yararlanmak isteyen birçok kişinin aklındaki en büyük soru şudur: <strong>"Mevcut bir kronik rahatsızlığım var. Tamamlayıcı Sağlık Sigortası (TSS) yaptırabilir miyim, yaptırırsam bu hastalığım karşılanır mı?"</strong></p>
+
+      <p class="mb-6">Gelin, sigorta şirketlerinin geçmişten gelen (kronik) hastalıklara yaklaşımını, hangi durumlarda sigorta yapılabildiğini ve nelere dikkat etmeniz gerektiğini tüm detaylarıyla inceleyelim.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Geçmişten Gelen Hastalıklar TSS Kapsamına Girer mi?</h2>
+      <p class="mb-4">Tamamlayıcı Sağlık Sigortası'nın temel çalışma prensibi, <strong>poliçe başlangıç tarihinden sonra</strong> ortaya çıkan hastalıkları güvence altına almaktır. Bu nedenle, sigorta yaptırmadan önce teşhisi konmuş, tedavisi devam eden veya geçmişte ameliyatı yapılmış kronik rahatsızlıklar (şeker, tansiyon, kalp hastalıkları, fıtıklar vb.) yasal olarak <strong>kapsam dışı</strong> bırakılır.</p>
+
+      <div class="bg-primary/5 p-6 rounded-2xl mb-8 border border-primary/10">
+        <h3 class="text-lg font-bold mb-2">⚠️ İstisnalar ve Şirket Politikaları</h3>
+        <p>Bir hastalığınızın olması, <strong>sigorta yaptıramayacağınız anlamına gelmez</strong>. Sigorta şirketi sizi yine de sigortalar; ancak poliçenize <em>"Bu poliçe, sigortalının geçmişten gelen X hastalığı ve bu hastalığa bağlı komplikasyonları kapsamaz"</em> şeklinde bir istisna (muafiyet) maddesi ekler. Diğer tüm yeni hastalıklarınız ise güvence altında olmaya devam eder.</p>
+      </div>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Sigorta Şirketleri Geçmiş Hastalıkları Nasıl Tespit Ediyor?</h2>
+      <p class="mb-4">Eski yıllarda beyana dayalı işlem yapılırken, günümüzde teknolojik altyapılar sayesinde geçmiş hastalıkların tespiti saniyeler sürmektedir. Sigorta şirketleri başvuru sırasında şu sistemleri sorgular:</p>
+      <ul class="list-disc pl-6 mb-6 space-y-3">
+        <li><strong>e-Nabız ve SGK Kayıtları:</strong> Geçmişte gittiğiniz doktor muayeneleri, aldığınız ilaçlar ve konulan tanılar.</li>
+        <li><strong>Sağlık Bilgi ve İzleme Merkezi (SAGMER):</strong> Daha önce başka bir şirketten sağlık sigortanız varsa, orada yapılan işlemlerin geçmiş kayıtları.</li>
+        <li><strong>Reçete Bilgileri:</strong> Düzenli kullandığınız ilaçların reçete geçmişi.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Kronik Hastalığı Olanlar İçin İpuçları</h2>
+      <p class="mb-4">Eğer kronik bir rahatsızlığınız varsa ve sigorta yaptırmak istiyorsanız şu noktalara dikkat etmelisiniz:</p>
+      <ul class="list-decimal pl-6 mb-6 space-y-2">
+        <li><strong>Doğru Beyan Verin:</strong> Başvuru formundaki soruları eksiksiz ve doğru yanıtlayın. Yanlış beyan durumunda poliçeniz iptal edilebilir.</li>
+        <li><strong>Kazanılmış Haklarınızı Koruyun:</strong> Eğer bir şirkette uzun yıllardır sigortalıysanız ve "Ömür Boyu Yenileme Garantisi" aldıysanız, başka şirkete geçerken hastalıklarınızın yeni şirkette kapsam dışı kalıp kalmayacağını mutlaka kontrol ettirin.</li>
+        <li><strong>Gecikmeden Yaptırın:</strong> Sağlığınız henüz yerindeyken ve kronik bir teşhis konulmadan önce sigortanızı başlatmanız, ileride ortaya çıkabilecek tüm hastalıkların koşulsuz karşılanmasını sağlar.</li>
+      </ul>
+
+      <p class="mt-8">Sağlık durumunuza en uygun koşullarla poliçe oluşturmak ve detaylı bilgi almak için <strong>UygunSigortaci.com</strong> uzmanlarımızla WhatsApp üzerinden iletişime geçebilirsiniz.</p>
+    `
+    },
+    "bebek-ve-cocuklar-icin-saglik-sigortasi": {
+        title: "Yeni Doğan Bebek ve Çocuklar İçin Sağlık Sigortası Rehberi",
+        category: "Sağlık",
+        date: "02 Temmuz 2026",
+        readTime: "5 dk okuma",
+        author: "Bebek Sağlığı Editörü",
+        image: "/blog/health.png",
+        content: `
+      <p class="mb-4 text-lg">Anne ve babalar için çocuklarının sağlığı her şeyden önce gelir. Özel hastanelerin çocuk polikliniklerindeki yoğunluk ve yüksek muayene/tedavi ücretleri, ebeveynleri <strong>Bebek ve Çocuk Sağlık Sigortası</strong> arayışına yönlendirmektedir.</p>
+
+      <p class="mb-6">Bu yazımızda, yeni doğan bebeklerden okul çağındaki çocuklara kadar sağlık sigortası yaptırırken en çok merak edilen konuları ele alıyoruz.</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Tek Başına Çocuk Sağlık Sigortası Yapılır mı?</h2>
+      <p class="mb-4">Evet, en çok merak edilen konulardan biri budur. Birçok sigorta şirketi, anne veya babanın poliçede yer alması şartı aramaksızın <strong>sadece çocuk için tek başına</strong> Tamamlayıcı Sağlık Sigortası (TSS) yapılmasına izin vermektedir. Ancak bazı şirketlerde çocuğun tek başına sigortalanabilmesi için prim oranlarında veya yaş sınırlarında farklılıklar olabilmektedir.</p>
+
+      <div class="bg-blue-50 dark:bg-blue-950/20 p-6 rounded-2xl mb-8 border border-blue-100 dark:border-blue-900/30">
+        <h3 class="text-lg font-bold mb-2 text-blue-700 dark:text-blue-400">👶 Yeni Doğan Bebekler Ne Zaman Sigortalanabilir?</h3>
+        <p>Bebeklerin doğumundan sonraki ilk günlerde (genellikle 14. veya 15. günden itibaren) sigorta başvurusu yapılabilmektedir. Erken yaşta sigorta başlatmak, bebeğin ileriki yaşlarda oluşabilecek rahatsızlıklarının sorunsuz karşılanması açısından büyük bir avantajdır.</p>
+      </div>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Çocuk Sağlık Sigortası Neleri Kapsar?</h2>
+      <p class="mb-4">Çocuklar için yapılan TSS poliçeleri genel olarak şu teminatları sunar:</p>
+      <ul class="list-disc pl-6 mb-6 space-y-3">
+        <li><strong>Ayakta Tedavi:</strong> Yılda genellikle 8 veya 10 adet doktor muayenesi, doktorun talep ettiği tahliller, röntgen, ultrason ve tahlil tetkikleri.</li>
+        <li><strong>Yatarak Tedavi:</strong> Ameliyatlar, hastane yatışları, oda-yemek masrafları, refakatçi giderleri ve acil tıbbi müdahaleler (limitsiz olarak karşılanır).</li>
+        <li><strong>Aşı ve Rutin Kontroller:</strong> Bazı özel poliçe paketlerinde çocukların rutin gelişim takipleri ve zorunlu/özel aşı masrafları da kısmen veya tamamen kapsama dahil edilebilmektedir.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Ebeveynlerin Dikkat Etmesi Gerekenler</h2>
+      <ul class="list-decimal pl-6 mb-6 space-y-2">
+        <li><strong>Aile İndirimi Fırsatı:</strong> Çocuğu tek başına sigortalamak yerine anne veya baba ile birlikte "Aile Paketi" olarak sigortalamak, şirketler tarafından %5 ile %15 arasında indirim uygulanmasını sağlar.</li>
+        <li><strong>Bekleme Süreleri:</strong> Poliçe başlar başlamaz aktif olmayan, bademcik ameliyatı, geniz eti veya kulak tüpü gibi bazı çocuk hastalıkları için 3 ay ile 12 ay arasında değişen bekleme süreleri uygulanır. Bu yüzden çocuğunuz hastalanmadan önce poliçe yaptırmak önemlidir.</li>
+        <li><strong>Anlaşmalı Çocuk Doktorları:</strong> Sigorta yaptıracağınız şirketin, çocuğunuzu sürekli götürmek istediğiniz hastane veya çocuk doktoruyla anlaşmalı olup olmadığını mutlaka kontrol edin.</li>
+      </ul>
+
+      <p class="mt-8">Bebeğinizin veya çocuğunuzun sağlığını güvence altına alacak en uygun poliçe alternatiflerini karşılaştırmak için <strong>UygunSigortaci.com</strong> üzerinden hızlıca çocuk teklifi talep edebilirsiniz.</p>
+    `
+    },
+    "saglik-sigortasi-vergi-indirimi-nasil-yapilir": {
+        title: "Sağlık Sigortası Ödemelerinizi Vergiden Nasıl Düşersiniz?",
+        category: "Sağlık",
+        date: "30 Haziran 2026",
+        readTime: "5 dk okuma",
+        author: "Finans ve Sigorta Editörü",
+        image: "/blog/health-2.png",
+        content: `
+      <p class="mb-4 text-lg">Tamamlayıcı Sağlık Sigortası (TSS) veya Özel Sağlık Sigortası (ÖSS) yaptırırken ödediğiniz primlerin aslında <strong>devlet tarafından desteklendiğini</strong> ve ödediğiniz tutarın bir kısmını geri alabileceğinizi biliyor muydunuz?</p>
+
+      <p class="mb-6">Gelir Vergisi Kanunu'na göre, sağlık sigortası primlerinizi vergi matrahından düşerek net bir kazanç elde edebilirsiniz. Peki bu süreç nasıl işler, kimler yararlanabilir?</p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Vergi İndiriminden Kimler Yararlanabilir?</h2>
+      <p class="mb-4">Sağlık sigortası vergi indiriminden yararlanabilecek iki temel mükellef grubu bulunmaktadır:</p>
+      <ul class="list-disc pl-6 mb-6 space-y-3">
+        <li><strong>Bordrolu Çalışanlar (Ücretliler):</strong> Özel sektör veya kamu fark etmeksizin maaşlı çalışanlar, ödedikleri sigorta prim makbuzlarını iş yerlerinin insan kaynakları veya muhasebe departmanlarına ileterek vergi indiriminden faydalanabilirler.</li>
+        <li><strong>Beyanname Veren Mükellefler:</strong> Gelir vergisi beyannamesi veren serbest meslek sahipleri (doktor, avukat, mali müşavir vb.), şahıs şirketi sahipleri veya kira geliri/ticari kazanç elde edenler yıllık beyannamelerinde bu primleri gider gösterebilirler.</li>
+      </ul>
+
+      <div class="bg-amber-50 dark:bg-amber-950/20 p-6 rounded-2xl mb-8 border border-amber-100 dark:border-amber-900/30">
+        <h3 class="text-lg font-bold mb-2 text-amber-700 dark:text-amber-400">📈 Ne Kadar Vergi İndirimi Alabilirsiniz?</h3>
+        <p>Vergi indirimi oranı, içinde bulunduğunuz <strong>gelir vergisi dilimine (%15, %20, %27, %35, %40)</strong> bağlıdır. Örneğin, %20'lik vergi dilimindeyseniz ve yıllık 10.000 TL sigorta primi ödediyseniz, bu işlemin sonucunda cebinize <strong>2.000 TL net vergi iadesi</strong> kalır. Poliçeniz size fiilen %20 daha ucuza gelmiş olur.</p>
+      </div>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Vergi İndirimi Limitleri Nelerdir?</h2>
+      <p class="mb-4">Devletin bu indirim için belirlediği bazı sınırlar vardır:</p>
+      <ul class="list-disc pl-6 mb-6 space-y-2">
+        <li>İndirim konusu yapılacak prim tutarı, ödendiği ayda elde edilen <strong>brüt ücretin %15'ini</strong> aşamaz.</li>
+        <li>Aynı zamanda, yıllık bazda <strong>asgari ücretin yıllık brüt tutarını</strong> geçemez.</li>
+        <li>Poliçede sadece kendinizin değil; eşinizin ve küçük çocuklarınızın primlerini de vergi indiriminde kullanabilirsiniz.</li>
+      </ul>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">Adım Adım Vergi İndirimi Nasıl Yapılır?</h2>
+      <p class="mb-4">Bordrolu bir çalışan olarak bu hakkı kullanmak için şu adımları izleyin:</p>
+      <ul class="list-decimal pl-6 mb-6 space-y-2">
+        <li>Sigorta poliçenizi satın aldıktan sonra sigorta şirketinden veya acentenizden <strong>tahsilat makbuzunu</strong> (ödeme belgesini) talep edin.</li>
+        <li>Bu makbuzu, her ayın ilk haftasında şirketinizin <strong>insan kaynakları veya muhasebe departmanına</strong> teslim edin.</li>
+        <li>Şirketiniz, o ayki brüt gelirinizden ödediğiniz sigorta prim tutarını düşerek gelir verginizi hesaplayacak ve aradaki farkı maaşınıza ek olarak yansıtacaktır.</li>
+      </ul>
+
+      <p class="mt-8">Hem sağlığınızı güvence altına almak hem de vergi avantajı fırsatlarını değerlendirerek en ekonomik çözüme ulaşmak için <strong>UygunSigortaci.com</strong> üzerinden hemen teklif formumuzu doldurabilirsiniz.</p>
+    `
+    },
     "trafik-sigortasi-nedir-neleri-kapsar": {
         title: "Trafik Sigortası Nedir? Neleri Kapsar?",
         category: "Trafik",

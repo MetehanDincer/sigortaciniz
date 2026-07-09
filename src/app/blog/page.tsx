@@ -15,6 +15,36 @@ export const metadata: Metadata = {
 // Dummy data for blog posts
 const blogPosts = [
     {
+        id: 7,
+        slug: "kronik-hastaligi-olanlar-tss-yaptirabilir-mi",
+        title: "Kronik Hastalığı Olanlar Tamamlayıcı Sağlık Sigortası Yaptırabilir mi?",
+        excerpt: "Geçmişten gelen veya kronik hastalıklar sağlık sigortası kapsamına girer mi? Sigorta şirketlerinin uyguladığı kurallar ve özel şartlar.",
+        date: "04 Temmuz 2026",
+        readTime: "6 dk okuma",
+        category: "Sağlık",
+        image: "/blog/health-2.png"
+    },
+    {
+        id: 8,
+        slug: "bebek-ve-cocuklar-icin-saglik-sigortasi",
+        title: "Yeni Doğan Bebek ve Çocuklar İçin Sağlık Sigortası Rehberi",
+        excerpt: "Çocuğunuza tek başına tamamlayıcı sağlık sigortası yaptırabilir misiniz? Bebek ve çocuk sigortalarında yaş sınırları, kapsam ve aile indirimleri.",
+        date: "02 Temmuz 2026",
+        readTime: "5 dk okuma",
+        category: "Sağlık",
+        image: "/blog/health.png"
+    },
+    {
+        id: 9,
+        slug: "saglik-sigortasi-vergi-indirimi-nasil-yapilir",
+        title: "Sağlık Sigortası Ödemelerinizi Vergiden Nasıl Düşersiniz?",
+        excerpt: "Ödediğiniz sağlık sigortası primleriyle maaşınızdan nasıl vergi iadesi alırsınız? Bordrolu çalışanlar için adım adım vergi indirimi rehberi.",
+        date: "30 Haziran 2026",
+        readTime: "5 dk okuma",
+        category: "Sağlık",
+        image: "/blog/health-2.png"
+    },
+    {
         id: 1,
         slug: "trafik-sigortasi-nedir-neleri-kapsar",
         title: "Trafik Sigortası Nedir? Neleri Kapsar?",
