@@ -136,7 +136,7 @@ export function ContactContent({ agency }: { agency?: any }) {
                                     <div>
                                         <h3 className="font-bold text-xl mb-1">Adres</h3>
                                         <div className="text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap">
-                                            {agency?.address || "Meşrutiyet Mah. Rumeli Cad. Konfor Çarşısı\nNo:40 İç Kapı No:47\nNişantaşı / Şişli / İstanbul"}
+                                            {agency?.address || "Göktürk Merkez, İstanbul Cad. Gökmahal Sitesi\nA15 Ofis No:28 Kat:5\n34077 Eyüpsultan / İstanbul"}
                                         </div>
                                     </div>
                                 </div>
@@ -214,7 +214,7 @@ export function ContactContent({ agency }: { agency?: any }) {
 
                     <div className="w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-sm border bg-muted">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3008.708673242794!2d28.987556909520325!3d41.05349951652282!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab73966580911%3A0xc3c9453c5cd6f11c!2zTWXFn3J1dGl5ZXQgTWFoLiBSdW1lbGkgQ2FkLiBLb25mb3Igw4dhcsWfxLFzxLEgTm86NDAgxLDDpyBLYXDEsSBObzo0NyBOacWfYW50YcWfxLEgLyDFnmnFn2xpIC8gxLBzdGFuYnVs!5e0!3m2!1str!2str!4v1769538257100!5m2!1str!2str"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1501.4906238090664!2d28.88472988872816!3d41.178576211627856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab37bc325add7%3A0x49f7656dd6201efb!2sUygun%20Sigortac%C4%B1!5e0!3m2!1str!2str!4v1783674799299!5m2!1str!2str"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}

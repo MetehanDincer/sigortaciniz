@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Phone, Mail, MapPin } from "lucide-react"
 
 export function Footer({ agency }: { agency?: any }) {
-    const defaultName = "Uygun Sigortacı"
+    const defaultName = "Uygunsigortacı"
     const defaultPhone = "0 537 947 34 64"
     const defaultEmail = "info@uygunsigortaci.com"
 
@@ -98,7 +98,7 @@ export function Footer({ agency }: { agency?: any }) {
 
                 <div className="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-muted-foreground text-center md:text-left">
-                        © {new Date().getFullYear()} {name}. Tüm hakları saklıdır.
+                        © 2025 Uygunsigortacı.com LİVİSTSİGORTA iştirakidir ve tüm hakları saklıdır.
                     </p>
                 </div>
             </div>

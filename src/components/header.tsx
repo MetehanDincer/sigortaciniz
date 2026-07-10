@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function Header({ agency }: { agency?: any }) {
-    const defaultName = "Uygun Sigortacı"
+    const defaultName = "Uygunsigortacı"
     const defaultPhone = "0 537 947 34 64"
 
     const name = agency?.name || defaultName

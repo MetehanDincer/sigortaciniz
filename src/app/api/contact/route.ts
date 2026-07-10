@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 import { cookies } from "next/headers"
-import { createClient } from "@/lib/supabase/server"
+import { createServiceClient } from "@/lib/supabase/service"
 
 export async function POST(request: Request) {
   try {
@@ -22,7 +22,10 @@ export async function POST(request: Request) {
       referralSource = null
     }
 
-    const supabase = await createClient()
+    // Service-role client: sunucu tarafı güvenilir kayıt (RLS'e takılmaz).
+    // Misafir müşterilerde "insert edildi ama geri okunamadı (RLS)" kaynaklı
+    // sahte hata sorununu çözer.
+    const supabase = createServiceClient()
 
     /* 
        DİKKAT: Giriş yapmış kullanıcının affiliate_id'sini otomatik alma (fallback) mantığı kaldırıldı.
@@ -123,40 +126,14 @@ export async function POST(request: Request) {
       console.warn("⚠️ Hiç aktif admin bulunamadı! Talep sahipsiz kalabilir.")
     }
 
-    // 4. Save to Supabase Leads table
-    let lead = null
-    let dbError = null
-
-    // Try to insert and select (works for logged in users/admins)
-    const result = await supabase.from('leads').insert({
+    // 4. Save to Supabase Leads table (service-role ile RLS bypass)
+    const { data: lead, error: dbError } = await supabase.from('leads').insert({
       affiliate_id: affiliateId || null,
       type: type,
       details: { ...data, referral_source: referralSource },
       status: 'Bekliyor',
       assigned_admin_id: assignedAdminId
     }).select().single()
-
-    lead = result.data
-    dbError = result.error
-
-    // FALLBACK: If RLS prevents selection (common for guests), perform a plain insert
-    if (dbError && (dbError.code === '42501' || dbError.message?.includes('permission denied'))) {
-      console.log("ℹ️ RLS uyarısı (Misafir Kullanıcı), sadece kayıt yapılıyor...")
-      const retryResult = await supabase.from('leads').insert({
-        affiliate_id: affiliateId || null,
-        type: type,
-        details: { ...data, referral_source: referralSource },
-        status: 'Bekliyor',
-        assigned_admin_id: assignedAdminId
-      })
-
-      if (!retryResult.error) {
-        console.log("✅ Talep (Sadece Kayıt) başarıyla yapıldı.")
-        return NextResponse.json({ success: true, message: "Form başarıyla alındı." })
-      } else {
-        dbError = retryResult.error
-      }
-    }
 
     if (dbError) {
       console.error("❌ Veritabanı kayıt hatası:", dbError)

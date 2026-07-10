@@ -17,7 +17,7 @@ export default function TermsOfUsePage() {
                             <section>
                                 <h2 className="text-2xl font-bold text-foreground mb-4">1. Taraflar ve Tanımlar</h2>
                                 <p>
-                                    İşbu sözleşme, Meşrutiyet Mah. Rumeli Cad. Konfor Çarşısı No:40 Nişantaşı / İstanbul adresinde mukim <strong>UygunSigortaci.com</strong> (bundan sonra "Şirket" olarak anılacaktır) ile web sitesini ziyaret eden veya hizmetlerden yararlanan gerçek/tüzel kişiler (bundan sonra "Kullanıcı" olarak anılacaktır) arasındaki kullanım şartlarını belirler.
+                                    İşbu sözleşme, Göktürk Merkez, İstanbul Cad. Gökmahal Sitesi A15 Ofis No:28 Kat:5, 34077 Eyüpsultan / İstanbul adresinde mukim <strong>UygunSigortaci.com</strong> (bundan sonra "Şirket" olarak anılacaktır) ile web sitesini ziyaret eden veya hizmetlerden yararlanan gerçek/tüzel kişiler (bundan sonra "Kullanıcı" olarak anılacaktır) arasındaki kullanım şartlarını belirler.
                                 </p>
                             </section>
 
