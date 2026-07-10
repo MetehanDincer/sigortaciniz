@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
 import { SEDDK_HIDDEN } from "@/lib/features"
+import { trackPhoneClick } from "@/lib/tracking"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -145,7 +146,7 @@ export function Header({ agency }: { agency?: any }) {
                     <Link href="/iletisim" className="hover:text-primary transition-colors">İletişim</Link>
                 </nav>
                 <div className="flex items-center gap-3">
-                    <a href={`tel:${phone.replace(/\s+/g, '')}`} className="hidden lg:flex items-center gap-1.5 text-foreground hover:text-primary transition-colors">
+                    <a href={`tel:${phone.replace(/\s+/g, '')}`} onClick={() => trackPhoneClick("header")} className="hidden lg:flex items-center gap-1.5 text-foreground hover:text-primary transition-colors">
                         <Phone className="h-4 w-4" />
                         <span className="font-semibold text-sm">{phone}</span>
                     </a>

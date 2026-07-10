@@ -2,6 +2,7 @@
 
 import { MessageCircle } from "lucide-react"
 import { usePathname } from "next/navigation"
+import { trackWhatsAppClick } from "@/lib/tracking"
 
 export function WhatsAppButton({ agency }: { agency?: any }) {
     const pathname = usePathname()
@@ -20,6 +21,7 @@ export function WhatsAppButton({ agency }: { agency?: any }) {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick("floating")}
             className="fixed bottom-8 right-8 z-50 group flex items-center gap-3"
             aria-label="WhatsApp üzerinden iletişime geçin"
         >

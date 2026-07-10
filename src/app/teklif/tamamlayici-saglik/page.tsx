@@ -1,4 +1,5 @@
 "use client"
+import { trackLead } from "@/lib/tracking"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -76,7 +77,7 @@ export default function TamamlayiciSaglikPage() {
 
             if (!response.ok) console.error("Email hatası");
 
-            setIsSuccess(true)
+            trackLead("Tamamlayıcı Sağlık Sigortası"); setIsSuccess(true)
         } catch (error) {
             alert("Bir hata oluştu. Lütfen tekrar deneyiniz.")
         } finally {

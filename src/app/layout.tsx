@@ -4,6 +4,7 @@ import "./globals.css";
 import { getAgencyConfig } from "@/lib/agency";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { GoogleAnalytics } from "@/components/google-analytics";
+import { AttributionCapture } from "@/components/attribution-capture";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -112,7 +113,8 @@ export default async function RootLayout({
           "--ring": agency?.primary_color || "#4f46e5",
         }}
       >
-        <GoogleAnalytics id={process.env.NEXT_PUBLIC_GA_ID || ""} />
+        <GoogleAnalytics id={process.env.NEXT_PUBLIC_GA_ID || "G-LDTM126YFD"} />
+        <AttributionCapture />
         {children}
         <WhatsAppButton agency={agency} />
         <Toaster />

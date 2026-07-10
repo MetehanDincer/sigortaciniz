@@ -1,4 +1,5 @@
 "use client"
+import { trackLead } from "@/lib/tracking"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -83,7 +84,7 @@ export default function TrafikSigortasiPage() {
                 return;
             }
 
-            setIsSuccess(true)
+            trackLead("Trafik Sigortası"); setIsSuccess(true)
         } catch (error) {
             alert("Bir hata oluştu. Lütfen tekrar deneyiniz.")
         } finally {

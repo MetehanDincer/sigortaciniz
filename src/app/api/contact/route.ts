@@ -22,6 +22,14 @@ export async function POST(request: Request) {
       referralSource = null
     }
 
+    // Reklam/kaynak bilgisi (UTM + gclid) — AttributionCapture tarafından yazılan çerezlerden
+    const attributionKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid'] as const
+    const attribution: Record<string, string> = {}
+    for (const key of attributionKeys) {
+      const val = cookieStore.get(key)?.value
+      if (val && val.trim() !== '') attribution[key] = val
+    }
+
     // Service-role client: sunucu tarafı güvenilir kayıt (RLS'e takılmaz).
     // Misafir müşterilerde "insert edildi ama geri okunamadı (RLS)" kaynaklı
     // sahte hata sorununu çözer.
@@ -130,7 +138,7 @@ export async function POST(request: Request) {
     const { data: lead, error: dbError } = await supabase.from('leads').insert({
       affiliate_id: affiliateId || null,
       type: type,
-      details: { ...data, referral_source: referralSource },
+      details: { ...data, referral_source: referralSource, attribution },
       status: 'Bekliyor',
       assigned_admin_id: assignedAdminId
     }).select().single()
