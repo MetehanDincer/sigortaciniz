@@ -1,5 +1,6 @@
 "use client"
 import { trackLead } from "@/lib/tracking"
+import { KvkkConsent } from "@/components/kvkk-consent"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -35,6 +36,7 @@ type FormValues = z.infer<typeof formSchema>
 
 export default function KaskoSigortasiPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [kvkkOnay, setKvkkOnay] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [profile, setProfile] = useState<any>(null)
@@ -76,7 +78,7 @@ export default function KaskoSigortasiPage() {
             const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "Kasko Sigortası", ...data }),
+                body: JSON.stringify({ type: "Kasko Sigortası", ...data, kvkkOnay }),
             })
 
             if (!response.ok) {
@@ -234,7 +236,8 @@ export default function KaskoSigortasiPage() {
                                 </div>
                             )}
 
-                            <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+                            <KvkkConsent checked={kvkkOnay} onCheckedChange={setKvkkOnay} />
+                            <Button type="submit" className="w-full" size="lg" disabled={isSubmitting || !kvkkOnay}>
                                 {isSubmitting ? "Gönderiliyor..." : "Teklif Al"}
                             </Button>
                         </form>
