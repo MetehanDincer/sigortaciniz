@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X, Phone, ChevronDown, Rocket, Building2, FileX, ShieldX, BookOpen } from "lucide-react"
+import { Menu, X, Phone, ChevronDown, Rocket, Building2, FileX, ShieldX, BookOpen, Car, Heart, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import Image from "next/image"
@@ -70,6 +70,15 @@ export function Header({ agency }: { agency?: any }) {
         return () => subscription.unsubscribe()
     }, [])
 
+    const services = [
+        { href: "/teklif/trafik", label: "Trafik Sigortası", icon: Car },
+        { href: "/teklif/kasko", label: "Kasko Sigortası", icon: Car },
+        { href: "/teklif/tamamlayici-saglik", label: "Tamamlayıcı Sağlık", icon: Heart },
+        { href: "/teklif/ozel-saglik", label: "Özel Sağlık", icon: Heart },
+        { href: "/teklif/dask", label: "DASK", icon: Home },
+        { href: "/teklif/konut-sigortasi", label: "Konut Sigortası", icon: Home },
+    ]
+
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-4">
@@ -90,7 +99,31 @@ export function Header({ agency }: { agency?: any }) {
                 </div>
                 <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-muted-foreground">
                     <Link href="/" className="hover:text-primary transition-colors">Ana Sayfa</Link>
-                    <Link href="/hizmetlerimiz" className="hover:text-primary transition-colors">Hizmetlerimiz</Link>
+
+                    {/* Hizmetlerimiz Dropdown */}
+                    <div className="relative">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="flex items-center gap-1 hover:text-primary transition-colors outline-none py-4 cursor-pointer">
+                                    Hizmetlerimiz <ChevronDown className="h-4 w-4" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-56 p-2 rounded-xl shadow-xl border-slate-100">
+                                {services.map((s) => (
+                                    <DropdownMenuItem key={s.href} asChild className="rounded-lg p-3 cursor-pointer">
+                                        <Link href={s.href} className="flex items-center gap-2 font-semibold">
+                                            <s.icon className="h-4 w-4 text-primary" /> {s.label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                ))}
+                                <DropdownMenuItem asChild className="rounded-lg p-3 cursor-pointer border-t mt-1 pt-2">
+                                    <Link href="/hizmetlerimiz" className="flex items-center gap-2 font-semibold text-primary">
+                                        Tüm Hizmetler
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
 
                     {/* Kurumsal Dropdown */}
                     <div className="relative">
@@ -191,13 +224,20 @@ export function Header({ agency }: { agency?: any }) {
                         >
                             Ana Sayfa
                         </Link>
-                        <Link
-                            href="/hizmetlerimiz"
-                            className="text-muted-foreground hover:text-primary font-medium py-2 pl-4"
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            Hizmetlerimiz
-                        </Link>
+                        {/* Hizmetlerimiz Mobile */}
+                        <div className="flex flex-col gap-2 pl-4">
+                            <span className="text-primary font-bold py-2">Hizmetlerimiz</span>
+                            {services.map((s) => (
+                                <Link
+                                    key={s.href}
+                                    href={s.href}
+                                    className="text-muted-foreground hover:text-primary font-medium py-1 pl-4 border-l border-slate-200"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    {s.label}
+                                </Link>
+                            ))}
+                        </div>
 
                         {/* Kurumsal Mobile */}
                         <div className="flex flex-col gap-2 pl-4">

@@ -1,14 +1,50 @@
 import Link from "next/link"
 import Image from "next/image"
-import { ShieldCheck, Car, Heart, Home, ArrowRight, BadgeCheck, Clock, Users, Menu, X } from "lucide-react"
+import { ShieldCheck, Car, Heart, Home, ArrowRight, BadgeCheck, Clock, Users, Menu, X, HeartPulse, Stethoscope, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { FaqSection, type FaqItem } from "@/components/faq-section"
 import { getAgencyConfig } from "@/lib/agency"
 
 export default async function LandingPage() {
   const agency = await getAgencyConfig()
   const name = agency?.name || "Uygun Sigortacı"
+
+  const faqs: FaqItem[] = [
+    {
+      q: "Tamamlayıcı Sağlık Sigortası (TSS) nedir?",
+      a: "Tamamlayıcı Sağlık Sigortası, SGK ile anlaşmalı özel hastanelerde SGK'nızı kullanarak muayene ve tedavi olmanızı sağlar; SGK'nın karşılamadığı fark ücretlerini poliçe şartları dahilinde karşılar. Böylece anlaşmalı özel hastanelerde cebinizden ek ödeme yapmadan hizmet alırsınız.",
+    },
+    {
+      q: "Tamamlayıcı Sağlık (TSS) ile Özel Sağlık Sigortası (ÖSS) arasındaki fark nedir?",
+      a: "TSS, SGK ile birlikte çalışır ve yalnızca SGK ile anlaşmalı özel sağlık kuruluşlarında geçerlidir; primleri daha uygundur. Özel Sağlık Sigortası ise SGK'dan bağımsız çalışır, daha geniş hastane ağı, daha yüksek limitler ve daha kapsamlı teminatlar sunar; primleri de buna göre daha yüksektir.",
+    },
+    {
+      q: "TSS'den yararlanmak için SGK'lı olmam şart mı?",
+      a: "Evet. Tamamlayıcı Sağlık Sigortası, aktif Genel Sağlık Sigortası (SGK) ile birlikte çalıştığı için SGK'nızın aktif olması gerekir. Özel Sağlık Sigortası'nda ise SGK şartı aranmaz.",
+    },
+    {
+      q: "Hangi tedaviler kapsanır?",
+      a: "Yatarak tedavi (ameliyat, yatış, yoğun bakım, kemoterapi, radyoterapi gibi) anlaşmalı kurumlarda genellikle limitsiz karşılanır. Ayakta tedavi (muayene, tahlil, röntgen, ileri tanı yöntemleri) yıllık belirli sayıda geçerlidir. Poliçeye göre check-up, diş paketi, psikolog/diyetisyen, online doktor ve 7/24 sağlık danışmanlığı gibi ek teminatlar da sunulabilir.",
+    },
+    {
+      q: "Hastanede ödemeyi ben mi yapıyorum?",
+      a: "Hayır. Anlaşmalı kurumlarda işlemleriniz, poliçe kapsamı dahilinde doğrudan sigorta şirketi tarafından provizyon ile karşılanır. Ücreti cebinizden ödeyip sonra iade beklemezsiniz.",
+    },
+    {
+      q: "Bekleme süresi var mı? Mevcut hastalıklarım kapsanır mı?",
+      a: "Bazı teminatlarda kısa bekleme süreleri olabilir (örneğin bazı ek teminatlarda 30 gün; doğum gibi teminatlarda daha uzun süreler). Poliçe başlangıcından önce var olan (mevcut) hastalıklar ise genellikle kapsam dışıdır. Bu koşullar poliçe özel şartlarında belirtilir.",
+    },
+    {
+      q: "Poliçe yurt dışında geçerli mi?",
+      a: "Tamamlayıcı Sağlık Sigortası Türkiye Cumhuriyeti sınırları içinde geçerlidir; yurt dışı tedavi giderleri kapsam dışıdır. Özel Sağlık Sigortası'nda ise seçtiğiniz plana göre yurt dışı teminat seçenekleri bulunabilir.",
+    },
+    {
+      q: "Fikrimi değiştirirsem poliçemi iptal edebilir miyim?",
+      a: "Evet. Genellikle ilk 30 gün içinde ve herhangi bir tazminat ödemesi gerçekleşmemişse ödediğiniz primler iade edilir. Sonraki iptallerde ise sigortacının sorumlu olduğu süreye denk gelen kısım gün esasına göre hesaplanır ve kalanı iade edilir.",
+    },
+  ]
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -171,6 +207,156 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        {/* Sağlık Sigortası Spotlight */}
+        <section className="relative overflow-hidden py-24 border-y bg-gradient-to-br from-primary/5 via-background to-primary/10">
+          {/* Silik yüzen sağlık emojileri */}
+          <div aria-hidden className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+            {[
+              { e: "🩺", top: "12%", left: "6%", size: 64, d: "0s" },
+              { e: "❤️", top: "68%", left: "9%", size: 52, d: "1.2s" },
+              { e: "➕", top: "30%", left: "19%", size: 40, d: "0.6s" },
+              { e: "🏥", top: "80%", left: "38%", size: 58, d: "1.8s" },
+              { e: "💊", top: "16%", left: "52%", size: 44, d: "0.9s" },
+              { e: "🚑", top: "58%", left: "60%", size: 60, d: "2.1s" },
+              { e: "🩹", top: "8%", left: "78%", size: 46, d: "1.5s" },
+              { e: "❤️", top: "42%", left: "90%", size: 50, d: "0.3s" },
+              { e: "➕", top: "86%", left: "86%", size: 38, d: "2.4s" },
+              { e: "🩺", top: "50%", left: "43%", size: 46, d: "1s" },
+            ].map((it, i) => (
+              <span
+                key={i}
+                className="absolute animate-float-slow"
+                style={{ top: it.top, left: it.left, fontSize: `${it.size}px`, opacity: 0.07, animationDelay: it.d }}
+              >
+                {it.e}
+              </span>
+            ))}
+          </div>
+
+          <div className="container relative z-10 px-4 md:px-6 max-w-screen-xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              {/* Sol: Metin */}
+              <div className="space-y-7">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
+                  <HeartPulse className="h-4 w-4" /> Sağlıkta İddialıyız
+                </div>
+                <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground leading-tight">
+                  Sağlığınız İçin <span className="text-primary">En Kapsamlı</span> Güvence
+                </h2>
+                <p className="text-muted-foreground text-lg max-w-xl">
+                  Özel ve tamamlayıcı sağlık sigortalarında iddialıyız. Anlaşmalı özel hastanelerde
+                  muayene farkı ödemeden, ameliyattan tetkike kadar tüm süreçte yanınızdayız.
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    { icon: Stethoscope, t: "Özel hastanelerde muayene farkı yok" },
+                    { icon: HeartPulse, t: "Ameliyat, yatış ve tetkiklerde geniş teminat" },
+                    { icon: Plus, t: "Türkiye geneli 3000+ anlaşmalı hastane" },
+                    { icon: ShieldCheck, t: "Kronik hastalık ve doğum teminatı seçenekleri" },
+                  ].map((b, i) => (
+                    <li key={i} className="flex items-center gap-3 text-foreground">
+                      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <b.icon className="h-5 w-5" />
+                      </span>
+                      <span className="font-medium">{b.t}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                  <Button size="lg" className="h-12 px-8 text-base" asChild>
+                    <Link href="/teklif/tamamlayici-saglik">
+                      Tamamlayıcı Sağlık Teklifi <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" className="h-12 px-8 text-base btn-health shadow-sm" asChild>
+                    <Link href="/teklif/ozel-saglik">Özel Sağlık Teklifi</Link>
+                  </Button>
+                </div>
+                {/* İstatistikler */}
+                <div className="grid grid-cols-3 gap-4 pt-6 border-t max-w-lg">
+                  <div>
+                    <div className="text-2xl md:text-3xl font-extrabold text-primary">3000+</div>
+                    <div className="text-xs text-muted-foreground">Anlaşmalı Hastane</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl md:text-3xl font-extrabold text-primary">0 TL</div>
+                    <div className="text-xs text-muted-foreground">Muayene Farkı</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl md:text-3xl font-extrabold text-primary">7/24</div>
+                    <div className="text-xs text-muted-foreground">Sağlık Danışmanı</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sağ: Sağlık Güvence Kartı */}
+              <div className="relative flex justify-center lg:justify-end">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-primary/20 rounded-full blur-3xl -z-10 animate-pulse" />
+                <div className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-gradient-to-br from-primary to-purple-900 p-7 text-white shadow-2xl overflow-hidden">
+                  {/* Kart üst */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
+                        <HeartPulse className="h-6 w-6" />
+                      </span>
+                      <div>
+                        <div className="text-xs text-white/70 leading-none">Uygunsigortacı</div>
+                        <div className="font-bold leading-tight">Sağlık Güvencesi</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold bg-white/15 px-2 py-1 rounded-full tracking-wider">PREMIUM</span>
+                  </div>
+
+                  {/* ECG kalp atışı çizgisi */}
+                  <div className="relative h-16 mb-6">
+                    <svg viewBox="0 0 400 80" className="w-full h-full" preserveAspectRatio="none">
+                      <path
+                        d="M0,40 L120,40 L140,40 L150,14 L166,66 L182,40 L205,40 L218,26 L232,54 L246,40 L400,40"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.95)"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="animate-ecg"
+                      />
+                    </svg>
+                  </div>
+
+                  {/* Teminatlar */}
+                  <div className="space-y-3 mb-6">
+                    {[
+                      "Yatarak ve ayakta tedavi",
+                      "Ameliyat ve yoğun bakım",
+                      "MR, tomografi ve tüm tetkikler",
+                      "Doğum ve kronik hastalık",
+                    ].map((t, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm text-white/90">
+                        <BadgeCheck className="h-4 w-4 text-white shrink-0" /> {t}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Alt: 0 TL Muayene Farkı — kalp ritmiyle vurgu */}
+                  <div className="pt-5 border-t border-white/15">
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center gap-2.5">
+                        <Heart className="h-8 w-8 shrink-0 text-white animate-heartbeat" fill="#fff" />
+                        <span className="text-5xl font-black leading-none tracking-tight animate-heartbeat">0 TL</span>
+                      </div>
+                      <span className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
+                        Muayene Farkı
+                      </span>
+                    </div>
+                    <p className="mt-4 text-center text-[11px] text-white/60">
+                      Anlaşmalı özel hastanelerde cebinizden ek ücret çıkmaz
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Services / Cards Section */}
         <section id="hizmetlerimiz" className="py-24 bg-background">
           <div className="container px-4 md:px-6 max-w-screen-2xl">
@@ -288,6 +474,23 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* SSS (SEO için FAQPage yapısal verisi + görsel accordion) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faqs.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            }),
+          }}
+        />
+        <FaqSection items={faqs} />
 
         {/* About Us Section */}
         <section id="hakkimizda" className="py-24 bg-muted/40 border-t">
