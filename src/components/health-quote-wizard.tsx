@@ -162,7 +162,7 @@ export function HealthQuoteWizard({ initialProduct = "tss" }: { initialProduct?:
                                 <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                                 <p>Aşağıdaki fiyatlar size fikir vermesi için hazırlanmış <strong>ortalama tutarlardır</strong>. Size özel <strong>en doğru teklifi</strong> hazırlayabilmemiz için bilgilerinizi bırakın; uzmanımız en kısa sürede sizi arayarak yardımcı olsun.</p>
                             </div>
-                            <Button className="shrink-0" onClick={() => setShowModal(true)}>Gerçek Teklifimi Al</Button>
+                            <Button className="shrink-0" onClick={() => setShowModal(true)}>Nihai Teklifi Gör</Button>
                         </div>
                     )}
 
@@ -205,9 +205,9 @@ export function HealthQuoteWizard({ initialProduct = "tss" }: { initialProduct?:
                             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                                 <Lock className="h-7 w-7 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold text-foreground">Gerçek teklifinizi hazırlayalım</h3>
+                            <h3 className="text-xl font-bold text-foreground">Nihai tekliflerinizi hazırlayalım</h3>
                             <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-                                Gösterge fiyatları gördünüz. Size <strong>gerçek ve net teklifinizi</strong> sunabilmemiz için aşağıdaki bilgileri girin; uzmanımız sizi arasın.
+                                Gösterge fiyatları gördünüz. Size <strong>nihai teklifinizi</strong> sunabilmemiz için aşağıdaki bilgileri girin; sigorta uzmanımız sizi arasın.
                             </p>
                         </div>
                         <div className="grid gap-3 sm:grid-cols-2">
