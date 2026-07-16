@@ -220,7 +220,7 @@ const blogPosts = {
 
       <div class="bg-blue-50 dark:bg-blue-950/20 p-6 rounded-2xl mb-8 border border-blue-100 dark:border-blue-900/30 shadow-sm transition-all duration-300">
         <h3 class="text-lg font-bold mb-2 text-blue-700 dark:text-blue-400">💰 Örnekli Anlatım:</h3>
-        <p>Hastaneye gittiniz ve muayene ücreti 1.500 TL. SGK bunun sadece 400 TL'sini ödüyor. Geriye kalan 1.100 TL'yi sizden istiyorlar. İşte <strong>TSS tam burada devreye girer</strong> ve o 1.100 TL'yi senin yerine sigorta şirketin öder. Sen sadece devletin zorunlu tuttuğu <strong>50 TL</strong> muayene katılım payını öder ve tedavini olursun.</p>
+        <p>Hastaneye gittiniz ve muayene ücreti 1.500 TL. SGK bunun sadece 400 TL'sini ödüyor. Geriye kalan 1.100 TL'yi sizden istiyorlar. İşte <strong>TSS tam burada devreye girer</strong> ve o 1.100 TL'yi senin yerine sigorta şirketin öder. Sen sadece devletin zorunlu tuttuğu <strong>152 TL</strong> muayene katılım payını öder ve tedavini olursun.</p>
       </div>
 
       <h2 class="text-2xl font-bold mt-8 mb-4 text-primary">TSS'nin Temel Avantajları</h2>

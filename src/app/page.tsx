@@ -245,11 +245,11 @@ export default async function LandingPage() {
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-xl">
                   Özel ve tamamlayıcı sağlık sigortalarında iddialıyız. Anlaşmalı özel hastanelerde
-                  muayene farkı ödemeden, ameliyattan tetkike kadar tüm süreçte yanınızdayız.
+                  yüksek farkları ödemeden, ameliyattan tetkike kadar tüm süreçte yanınızdayız.
                 </p>
                 <ul className="space-y-3">
                   {[
-                    { icon: Stethoscope, t: "Özel hastanelerde muayene farkı yok" },
+                    { icon: Stethoscope, t: "Anlaşmalı hastanelerde yalnızca 152 TL muayene farkı" },
                     { icon: HeartPulse, t: "Ameliyat, yatış ve tetkiklerde geniş teminat" },
                     { icon: Plus, t: "Türkiye geneli 3000+ anlaşmalı hastane" },
                     { icon: ShieldCheck, t: "Kronik hastalık ve doğum teminatı seçenekleri" },
@@ -279,7 +279,7 @@ export default async function LandingPage() {
                     <div className="text-xs text-muted-foreground">Anlaşmalı Hastane</div>
                   </div>
                   <div>
-                    <div className="text-2xl md:text-3xl font-extrabold text-primary">0 TL</div>
+                    <div className="text-2xl md:text-3xl font-extrabold text-primary">152 TL</div>
                     <div className="text-xs text-muted-foreground">Muayene Farkı</div>
                   </div>
                   <div>
@@ -336,19 +336,19 @@ export default async function LandingPage() {
                     ))}
                   </div>
 
-                  {/* Alt: 0 TL Muayene Farkı — kalp ritmiyle vurgu */}
+                  {/* Alt: Muayene Farkı — kalp ritmiyle vurgu */}
                   <div className="pt-5 border-t border-white/15">
                     <div className="flex flex-col items-center">
                       <div className="flex items-center gap-2.5">
                         <Heart className="h-8 w-8 shrink-0 text-white animate-heartbeat" fill="#fff" />
-                        <span className="text-5xl font-black leading-none tracking-tight animate-heartbeat">0 TL</span>
+                        <span className="text-5xl font-black leading-none tracking-tight animate-heartbeat">152 TL</span>
                       </div>
                       <span className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
                         Muayene Farkı
                       </span>
                     </div>
                     <p className="mt-4 text-center text-[11px] text-white/60">
-                      Anlaşmalı özel hastanelerde cebinizden ek ücret çıkmaz
+                      Anlaşmalı özel hastanelerde yalnızca devletin belirlediği 152 TL muayene farkını ödersiniz
                     </p>
                   </div>
                 </div>
