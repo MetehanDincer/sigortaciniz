@@ -12,6 +12,10 @@ export const phoneSchema = z.string()
     .length(11, "Telefon numarası 05XXXXXXXXX formatında 11 haneli olmalıdır.")
     .startsWith("05", "Telefon numarası 05 ile başlamalıdır.");
 
+export const emailSchema = z.string()
+    .min(1, "E-posta adresi zorunludur.")
+    .email("Geçerli bir e-posta adresi giriniz.");
+
 export const birthDateSchema = z.string()
     .length(10, "Doğum tarihi GG.AA.YYYY formatında olmalıdır.")
     .refine((val) => {

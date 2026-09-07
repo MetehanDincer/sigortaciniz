@@ -16,7 +16,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { createClient } from "@/lib/supabase/client"
 import { maskTC, maskPhone, maskBirthDate } from "@/lib/masks"
-import { tcSchema, phoneSchema, birthDateSchema } from "@/lib/validations"
+import { tcSchema, phoneSchema, birthDateSchema, emailSchema } from "@/lib/validations"
 
 const formSchema = z.object({
     tcNumber: tcSchema,
@@ -29,6 +29,7 @@ const formSchema = z.object({
         .regex(/^[A-Z]{2}\d{6}$/, "Ruhsat Seri No 2 harf ve 6 rakam olmalıdır (örn: AB123456).")
         .transform(val => val.toUpperCase().replace(/\s/g, '')),
     phoneNumber: phoneSchema,
+    email: emailSchema,
     referenceNumber: z.string().optional(),
 })
 
@@ -215,6 +216,21 @@ export default function KaskoSigortasiPage() {
                                 {errors.phoneNumber && (
                                     <span className="text-xs text-destructive">
                                         {errors.phoneNumber.message}
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="email">E-posta Adresi</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="ornek@email.com"
+                                    {...register("email")}
+                                />
+                                {errors.email && (
+                                    <span className="text-xs text-destructive">
+                                        {errors.email.message}
                                     </span>
                                 )}
                             </div>

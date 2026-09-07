@@ -123,7 +123,12 @@ export function HealthQuoteWizard({ initialProduct = "tss" }: { initialProduct?:
                         </div>
                         <div>
                             <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">Yaşınız</label>
-                            <input className={field} type="number" min={0} max={80} inputMode="numeric" placeholder="Örn. 30" value={age} onChange={(e) => setAge(e.target.value)} />
+                            <input className={field} type="number" min={0} max={80} inputMode="numeric" placeholder="Örn. 30" value={age} onChange={(e) => {
+                                const digits = e.target.value.replace(/\D/g, "").slice(0, 2)
+                                if (digits === "") { setAge(""); return }
+                                const n = Math.min(parseInt(digits, 10), 80)
+                                setAge(String(n))
+                            }} onKeyDown={(e) => { if (["e", "E", "+", "-", ".", ","].includes(e.key)) e.preventDefault() }} />
                         </div>
                         <div>
                             <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">Yaşadığınız şehir</label>
@@ -160,7 +165,7 @@ export function HealthQuoteWizard({ initialProduct = "tss" }: { initialProduct?:
                         <div className="mb-6 flex flex-col items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4 sm:flex-row">
                             <div className="flex items-start gap-3 text-sm text-foreground">
                                 <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                                <p>Aşağıdaki fiyatlar size fikir vermesi için hazırlanmış <strong>ortalama tutarlardır</strong>. Size özel <strong>en doğru teklifi</strong> hazırlayabilmemiz için bilgilerinizi bırakın; uzmanımız en kısa sürede sizi arayarak yardımcı olsun.</p>
+                                <p>Aşağıdaki fiyatlar, size hazırlanacak nihai teklifinize <strong>en yakın tahmini tutarlardır</strong> (−%15 / +%15 farklılık gösterebilir). Size özel <strong>en doğru teklifi</strong> hazırlayabilmemiz için bilgilerinizi bırakın; uzmanımız en kısa sürede sizi arayarak yardımcı olsun.</p>
                             </div>
                             <Button className="shrink-0" onClick={() => setShowModal(true)}>Nihai Teklifi Gör</Button>
                         </div>
@@ -174,7 +179,7 @@ export function HealthQuoteWizard({ initialProduct = "tss" }: { initialProduct?:
                                 )}
                                 <div className="mb-4 text-lg font-bold text-foreground">{q.name}</div>
                                 <div className="mb-4 border-b pb-4">
-                                    <div className="text-xs text-muted-foreground">Ortalama gösterge fiyat</div>
+                                    <EnYakinTeklifLabel />
                                     <div className="text-3xl font-extrabold text-primary">{formatTL(q.yearly)} TL<span className="text-sm font-medium text-muted-foreground"> /yıl</span></div>
                                     <div className="text-xs text-muted-foreground">{q.installments} taksitle aylık {formatTL(q.monthly)} TL</div>
                                 </div>
@@ -207,7 +212,7 @@ export function HealthQuoteWizard({ initialProduct = "tss" }: { initialProduct?:
                             </div>
                             <h3 className="text-xl font-bold text-foreground">Nihai tekliflerinizi hazırlayalım</h3>
                             <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-                                Gösterge fiyatları gördünüz. Size <strong>nihai teklifinizi</strong> sunabilmemiz için aşağıdaki bilgileri girin; sigorta uzmanımız sizi arasın.
+                                En yakın teklifleri gördünüz. Size <strong>nihai teklifinizi</strong> sunabilmemiz için aşağıdaki bilgileri girin; sigorta uzmanımız sizi arasın.
                             </p>
                         </div>
                         <div className="grid gap-3 sm:grid-cols-2">
@@ -239,6 +244,36 @@ export function HealthQuoteWizard({ initialProduct = "tss" }: { initialProduct?:
                         </div>
                     </div>
                 </div>
+            )}
+        </div>
+    )
+}
+
+// Fiyat kartı üstündeki "EN YAKIN TEKLİF" etiketi.
+// Tıklanınca, ekrandaki tutarın nihai tekliften farklılık gösterebileceğini
+// açıklayan bilgi kutusunu açar/kapatır.
+function EnYakinTeklifLabel() {
+    const [open, setOpen] = useState(false)
+    return (
+        <div className="relative">
+            <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                aria-expanded={open}
+                className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-primary transition-colors hover:text-primary/80"
+            >
+                En Yakın Teklif
+                <Info className="h-3.5 w-3.5" />
+            </button>
+            {open && (
+                <>
+                    <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+                    <div className="absolute left-0 top-full z-50 mt-2 w-72 rounded-xl border bg-white p-3 text-left text-xs leading-relaxed text-muted-foreground shadow-xl">
+                        Ekranda tarafınıza iletilen teklif sigorta danışmanınız tarafından size hazırlanacak olan{" "}
+                        <strong className="text-foreground">nihai teklifinizden (−%15 / +%15)</strong> farklılık gösterebilir.
+                        En sağlıklı tekliflerinizi görüntüleyebilmek için tarafınızdan talep edilen bilgileri doldurmanız yeterlidir.
+                    </div>
+                </>
             )}
         </div>
     )

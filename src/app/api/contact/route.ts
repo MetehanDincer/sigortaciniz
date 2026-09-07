@@ -91,6 +91,27 @@ export async function POST(request: Request) {
       await transporter.sendMail(mailOptions)
     }
 
+    // 2b. Müşteriye karşılama e-postası (form içinde e-posta verildiyse)
+    const customerEmail = typeof data.email === 'string' ? data.email.trim() : ''
+    if (customerEmail && process.env.EMAIL_PASSWORD) {
+      const welcomeMailOptions = {
+        from: '"Uygun Sigortacı" <sigortaciniz.2025@gmail.com>',
+        to: customerEmail,
+        subject: "Uygunsigortaci.com Ailesine Hoşgeldiniz!",
+        html: `
+          <h2>Uygunsigortaci.com ailesine hoşgeldiniz! 🎉</h2>
+          <p>Başvurunuz tarafımıza iletildi. En kısa sürede danışmanlarımız tarafından bilgilendirileceksiniz.</p>
+          <p>Bizi tercih ettiğiniz için teşekkür ederiz.</p>
+          <p><strong>Uygun Sigortacı Ekibi</strong></p>
+        `,
+      }
+      try {
+        await transporter.sendMail(welcomeMailOptions)
+      } catch (welcomeMailError) {
+        console.error("⚠️ Müşteri karşılama maili gönderilemedi:", welcomeMailError)
+      }
+    }
+
     // 3. Round Robin Assignment Logic
     // Get all active admins ordered by admin_code
     const { data: admins, error: adminsError } = await supabase

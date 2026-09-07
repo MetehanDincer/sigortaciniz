@@ -8,7 +8,7 @@ import type { Product } from "@/lib/health-pricing"
 export async function HealthQuotePage({
     initialProduct = "tss",
     productName = "Sağlık Sigortası",
-    subtitle = "Tamamlayıcı ve özel sağlık sigortası seçeneklerini karşılaştırın, gösterge fiyatınızı hemen görün. Uzmanımız size en uygun poliçe için dönüş yapsın.",
+    subtitle = "Tamamlayıcı ve özel sağlık sigortası seçeneklerini karşılaştırın, size en yakın teklifi hemen görün. Uzmanımız size en uygun poliçe için dönüş yapsın.",
 }: {
     initialProduct?: Product
     productName?: string

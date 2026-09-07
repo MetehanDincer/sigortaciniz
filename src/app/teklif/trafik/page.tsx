@@ -16,7 +16,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { createClient } from "@/lib/supabase/client"
 import { maskTC, maskPhone, maskBirthDate } from "@/lib/masks"
-import { tcSchema, phoneSchema, birthDateSchema } from "@/lib/validations"
+import { tcSchema, phoneSchema, birthDateSchema, emailSchema } from "@/lib/validations"
 
 const formSchema = z.object({
     tcNumber: tcSchema,
@@ -27,6 +27,7 @@ const formSchema = z.object({
         .transform(val => val.toUpperCase().replace(/\s/g, '')),
     licenseSerial: z.string().min(1, "Ruhsat Seri No zorunludur."),
     phoneNumber: phoneSchema,
+    email: emailSchema,
     referenceNumber: z.string().optional(),
 })
 
@@ -213,6 +214,21 @@ export default function TrafikSigortasiPage() {
                                 {errors.phoneNumber && (
                                     <span className="text-xs text-destructive">
                                         {errors.phoneNumber.message}
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="email">E-posta Adresi</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="ornek@email.com"
+                                    {...register("email")}
+                                />
+                                {errors.email && (
+                                    <span className="text-xs text-destructive">
+                                        {errors.email.message}
                                     </span>
                                 )}
                             </div>

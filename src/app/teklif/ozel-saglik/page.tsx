@@ -4,7 +4,7 @@ import { HealthQuotePage } from "@/components/health-quote-page"
 export const metadata: Metadata = {
     title: "Özel Sağlık Sigortası Teklifi Al",
     description:
-        "Özel sağlık sigortası (ÖSS) tekliflerini saniyeler içinde karşılaştırın. Geniş hastane ağı ve kapsamlı teminatlar için gösterge fiyatınızı hemen görün, uzmanımız sizi arasın.",
+        "Özel sağlık sigortası (ÖSS) tekliflerini saniyeler içinde karşılaştırın. Geniş hastane ağı ve kapsamlı teminatlar için size en yakın teklifi hemen görün, uzmanımız sizi arasın.",
 }
 
 export default function OzelSaglikPage() {

@@ -31,9 +31,14 @@ export const CITIES = [
 ]
 
 // 30 yaş / erkek / İstanbul baz alınarak yıllık baz prim (TL) — GÜNCELLENEBİLİR
+// Özel Sağlık Sigortası (oss), Tamamlayıcı Sağlık Sigortası'nın (tss) tam 4 katıdır.
+// Tüm çarpanlar (yaş/cinsiyet/şehir/şirket) her iki üründe de aynı olduğu için,
+// oss bazını tss × 4 yapmak her teklifte "oss = tss × 4" sonucunu garanti eder.
+const TSS_BASE = 11000
+const OSS_TSS_KAT = 4 // özel sağlık = tamamlayıcı × 4
 const BASE: Record<Product, number> = {
-    tss: 11000,
-    oss: 26000,
+    tss: TSS_BASE,
+    oss: TSS_BASE * OSS_TSS_KAT,
     dogum: 15000,
     yabanci: 9000,
 }
