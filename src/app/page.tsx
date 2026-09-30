@@ -138,24 +138,30 @@ export default async function LandingPage() {
 
                     {/* Offer Cards Container */}
                     <div className="flex-1 bg-gray-50 p-4 space-y-4 overflow-y-auto hide-scrollbar">
-                      <div className="text-sm font-semibold text-gray-500 mb-2">Size Özel Teklifler</div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-semibold text-gray-500">Size Özel Teklifler</div>
+                        <div className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full">1 Yıllık Poliçe</div>
+                      </div>
 
                       {/* Card 1: En Ucuz */}
                       <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm relative">
                         <div className="absolute top-0 right-0 bg-gray-100 text-[10px] font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg text-gray-600">
                           EN UCUZ
                         </div>
-                        <div className="font-bold text-gray-900 mb-1">A Sigorta</div>
-                        <div className="text-2xl font-bold text-primary mb-3">5.000 TL</div>
+                        <div className="font-bold text-gray-900 mb-1">Tamamlayıcı Sağlık</div>
+                        <div className="text-2xl font-bold text-primary mb-3">9.000 TL<span className="text-xs font-medium text-gray-400"> /yıl</span></div>
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center text-xs text-gray-500">
-                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> İMM: 3.000.000 TL
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> 5 Ayakta Tedavi Limiti
                           </div>
                           <div className="flex items-center text-xs text-gray-500">
-                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Anlaşmalı Servisler
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Ameliyat Sınırsız
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500">
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Yatarak Tedavi Sınırsız
                           </div>
                         </div>
-                        <Button size="sm" variant="outline" className="w-full text-xs h-8 text-primary border-primary hover:bg-primary/5">Satın Al</Button>
+                        <Button asChild size="sm" variant="outline" className="w-full text-xs h-8 text-primary border-primary hover:bg-primary/5"><Link href="/teklif/tamamlayici-saglik">Nihai Teklifleri Gör</Link></Button>
                       </div>
 
                       {/* Card 2: Önerilen (Highlighted) */}
@@ -163,20 +169,23 @@ export default async function LandingPage() {
                         <div className="absolute top-0 right-0 bg-primary text-[10px] font-bold px-2 py-1 rounded-bl-lg text-white">
                           ÖNERİLEN
                         </div>
-                        <div className="font-bold text-gray-900 mb-1">B Sigorta</div>
-                        <div className="text-2xl font-bold text-primary mb-3">8.000 TL</div>
+                        <div className="font-bold text-gray-900 mb-1">Tamamlayıcı Sağlık</div>
+                        <div className="text-2xl font-bold text-primary mb-3">12.000 TL<span className="text-xs font-medium text-gray-400"> /yıl</span></div>
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center text-xs text-gray-600 font-medium">
-                            <BadgeCheck className="h-3 w-3 text-primary mr-2" /> İMM: 5.000.000 TL
+                            <BadgeCheck className="h-3 w-3 text-primary mr-2" /> 7 Ayakta Tedavi Limiti
                           </div>
                           <div className="flex items-center text-xs text-gray-600 font-medium">
-                            <BadgeCheck className="h-3 w-3 text-primary mr-2" /> Geniş Servis Ağı
+                            <BadgeCheck className="h-3 w-3 text-primary mr-2" /> Ameliyat Sınırsız
                           </div>
                           <div className="flex items-center text-xs text-gray-600 font-medium">
-                            <BadgeCheck className="h-3 w-3 text-primary mr-2" /> Orijinal Cam
+                            <BadgeCheck className="h-3 w-3 text-primary mr-2" /> Yatarak Tedavi Sınırsız
+                          </div>
+                          <div className="flex items-center text-xs text-gray-600 font-medium">
+                            <BadgeCheck className="h-3 w-3 text-primary mr-2" /> Diş Paketi
                           </div>
                         </div>
-                        <Button size="sm" className="w-full text-xs h-8">Satın Al</Button>
+                        <Button asChild size="sm" className="w-full text-xs h-8"><Link href="/teklif/tamamlayici-saglik">Nihai Teklifleri Gör</Link></Button>
                       </div>
 
                       {/* Card 3: En Kapsamlı */}
@@ -184,17 +193,26 @@ export default async function LandingPage() {
                         <div className="absolute top-0 right-0 bg-gray-100 text-[10px] font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg text-gray-600">
                           EN KAPSAMLI
                         </div>
-                        <div className="font-bold text-gray-900 mb-1">C Sigorta</div>
-                        <div className="text-2xl font-bold text-primary mb-3">11.000 TL</div>
+                        <div className="font-bold text-gray-900 mb-1">Tamamlayıcı Sağlık</div>
+                        <div className="text-2xl font-bold text-primary mb-3">15.000 TL<span className="text-xs font-medium text-gray-400"> /yıl</span></div>
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center text-xs text-gray-500">
-                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> İMM: Limitsiz
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> 10 Ayakta Tedavi Limiti
                           </div>
                           <div className="flex items-center text-xs text-gray-500">
-                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Yetkili Servisler
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Ameliyat Sınırsız
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500">
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Yatarak Tedavi Sınırsız
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500">
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Diş Paketi
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500">
+                            <BadgeCheck className="h-3 w-3 text-green-500 mr-2" /> Mini Check-up Paketi
                           </div>
                         </div>
-                        <Button size="sm" variant="outline" className="w-full text-xs h-8 text-primary border-primary hover:bg-primary/5">Satın Al</Button>
+                        <Button asChild size="sm" variant="outline" className="w-full text-xs h-8 text-primary border-primary hover:bg-primary/5"><Link href="/teklif/tamamlayici-saglik">Nihai Teklifleri Gör</Link></Button>
                       </div>
                     </div>
                   </div>

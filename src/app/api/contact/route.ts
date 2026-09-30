@@ -97,12 +97,42 @@ export async function POST(request: Request) {
       const welcomeMailOptions = {
         from: '"Uygun Sigortacı" <sigortaciniz.2025@gmail.com>',
         to: customerEmail,
-        subject: "Uygunsigortaci.com Ailesine Hoşgeldiniz!",
+        subject: "Talebiniz bize ulaştı | Uygun Sigortacı",
+        text: [
+          "Merhaba,",
+          "",
+          "Bize ulaştığınız için teşekkür ederiz.",
+          "",
+          "Talebiniz başarıyla alınmıştır. Uzman ekibimiz sizin için uygun sigorta seçeneklerini değerlendirecek ve en kısa sürede sizinle iletişime geçecektir.",
+          "",
+          "Bizim için önemli olan yalnızca poliçe düzenlemek değil; ihtiyacınızı doğru anlamak, doğru teminatı sunmak ve ihtiyaç duyduğunuzda yanınızda olmak.",
+          "",
+          "Uygun Sigortacı ailesine hoş geldiniz.",
+          "",
+          "Uygun Sigortacı Ekibi",
+          "Sigortanız bizden sorulur.",
+        ].join("\n"),
         html: `
-          <h2>Uygunsigortaci.com ailesine hoşgeldiniz! 🎉</h2>
-          <p>Başvurunuz tarafımıza iletildi. En kısa sürede danışmanlarımız tarafından bilgilendirileceksiniz.</p>
-          <p>Bizi tercih ettiğiniz için teşekkür ederiz.</p>
-          <p><strong>Uygun Sigortacı Ekibi</strong></p>
+          <div style="background:#f5f3ff;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;">
+              <tr>
+                <td style="background:#7c3aed;padding:20px 28px;color:#ffffff;font-size:20px;font-weight:bold;">
+                  Uygunsigortacı.com
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:28px;color:#1f2937;font-size:15px;line-height:1.6;">
+                  <p style="margin:0 0 16px;">Merhaba,</p>
+                  <p style="margin:0 0 16px;">Bize ulaştığınız için teşekkür ederiz.</p>
+                  <p style="margin:0 0 16px;">Talebiniz başarıyla alınmıştır. Uzman ekibimiz sizin için uygun sigorta seçeneklerini değerlendirecek ve en kısa sürede sizinle iletişime geçecektir.</p>
+                  <p style="margin:0 0 16px;">Bizim için önemli olan yalnızca poliçe düzenlemek değil; ihtiyacınızı doğru anlamak, doğru teminatı sunmak ve ihtiyaç duyduğunuzda yanınızda olmak.</p>
+                  <p style="margin:0 0 24px;font-weight:bold;color:#7c3aed;">Uygun Sigortacı ailesine hoş geldiniz.</p>
+                  <p style="margin:0;font-weight:bold;">Uygun Sigortacı Ekibi</p>
+                  <p style="margin:4px 0 0;color:#6b7280;font-style:italic;">Sigortanız bizden sorulur.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
         `,
       }
       try {
